@@ -1,4 +1,6 @@
 #include "settings/compiler.h"
 #include "settings/types.h"
 #include "threads/atomic.h"
+#include "crt.h"
+#include "debugging/CAssert.h"
 #include "threads/threads.h"

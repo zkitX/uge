@@ -63,7 +63,7 @@ namespace uge
         DWORD threadId = static_cast<DWORD>(id.Get());
 
         // We can't suspend the current thread
-        assert( threadId != GetCurrentThreadId() );
+        UGE_ASSERT( threadId != GetCurrentThreadId(), "Unable to suspend current thread!" );
 
         Thread_t thread = OpenThread( THREAD_SUSPEND_RESUME, FALSE, threadId );
         if ( thread != INVALID_HANDLE_VALUE )

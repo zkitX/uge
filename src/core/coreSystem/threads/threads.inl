@@ -1,7 +1,4 @@
 #include "threads.h"
-#ifndef __CORESYSTEM_THREADS_INL__
-#define __CORESYSTEM_THREADS_INL__
-#pragma once
 
 namespace uge
 {
@@ -107,5 +104,3 @@ namespace uge
 
 
 }
-
-#endif

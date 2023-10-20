@@ -1,6 +1,5 @@
 #ifndef __CORESYSTEM_FILE_H__
 #define __CORESYSTEM_FILE_H__
-#pragma once
 
 #include <stdio.h>
 

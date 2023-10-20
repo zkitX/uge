@@ -1,6 +1,5 @@
 #ifndef __CORESYSTEM_THREADS_H__
 #define __CORESYSTEM_THREADS_H__
-#pragma once
 
 #define UGE_NOCLASSCOPY(class_)     \
     private:                        \
@@ -153,19 +152,20 @@ namespace uge
         AnsiChar        m_threadName[g_MaxThreadNameLength];
 
     public:
-                        Thread( const Char* threadName );
-        virtual         ~Thread();
-        void            Join();
-        void            Detach();
-        void            Init();
+        Thread( const Char* threadName );
+        virtual ~Thread();
+        void Join();
+        void Detach();
+        void Init();
 
-        virtual void    ThreadFunc() = 0;
-        const AnsiChar* GetThreadName() const;
+        virtual void ThreadFunc() = 0;
+        UGE_INLINE const AnsiChar* GetThreadName() const;
 
-        void            SetAffinityMask( AffinityMask_t mask );
-        void            SetPriority( EThreadPriority threadPriority );
+        void SetAffinityMask( AffinityMask_t mask );
+        void SetPriority( EThreadPriority threadPriority );
 
-        Bool            operator==( const Thread& other ) const;
+        UGE_INLINE Bool operator==( const Thread& other ) const;
+        UGE_INLINE Bool operator!=( const Thread& other ) const;
     };
 }
 

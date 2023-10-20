@@ -1,6 +1,5 @@
 #ifndef __CORESYSTEM_ATOMIC_H__
 #define __CORESYSTEM_ATOMIC_H__
-#pragma once
 
 #include <intrin.h>
 

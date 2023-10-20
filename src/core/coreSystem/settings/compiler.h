@@ -1,6 +1,5 @@
 #ifndef __CORESYSTEM_COMPILER_H__
 #define __CORESYSTEM_COMPILER_H__
-#pragma once
 
 #define UGE_FUNCTION __FUNCTION__
 

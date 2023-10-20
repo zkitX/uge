@@ -1,4 +1,4 @@
-file (GLOB_RECURSE coreSystemSrc CONFIGURE_DEPENDS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp *.h *.hpp *.inl *.ico *.rc)
+file (GLOB_RECURSE coreSystemSrc CONFIGURE_DEPENDS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp *.h *.hpp *.inl)
 
 add_library(coreSystem STATIC
     ${coreSystemSrc}

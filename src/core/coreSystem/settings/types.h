@@ -1,13 +1,9 @@
 #ifndef __CORESYSTEM_TYPES_H__
 #define __CORESYSTEM_TYPES_H__
-#pragma once
 
 #include <Windows.h>
 #include <cstdint>
 #include <cinttypes>
-
-// TODO: Custom assert function
-#include <assert.h>
 
 namespace uge
 {
