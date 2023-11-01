@@ -412,3 +412,4 @@ _deps
 
 # Custom
 /build
+.vscode/settings.json

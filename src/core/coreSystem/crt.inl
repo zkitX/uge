@@ -1,3 +1,10 @@
+#include <cstring>
+#include <cstdlib>
+#include <cwchar>
+#include <cctype>
+#include <cwctype>
+#include <stdio.h>
+#include <errno.h>
 #include "crt.h"
 
 namespace uge
@@ -20,7 +27,17 @@ namespace uge
     {
         return Memset(ptr, 0, n);
     }
-    
+
+    UGE_FORCE_INLINE void *Malloc( size_t size)
+    {
+        void* ptr = ::malloc( size );
+        if (ptr = nullptr)
+        {
+            return nullptr;
+        }
+        return ptr;
+    }
+
     UGE_FORCE_INLINE Bool Strcpy(AnsiChar *dest, const AnsiChar *src, size_t destSize, size_t srcSize)
     {
         return ::strncpy_s( dest, destSize, src, srcSize ) == 0;
@@ -29,5 +46,25 @@ namespace uge
     UGE_FORCE_INLINE Bool Strcpy( UniChar* dest, const UniChar* src, size_t destSize, size_t srcSize )
     {
         return ::wcsncpy_s( dest, destSize, src, srcSize ) == 0;
+    }
+
+    UGE_FORCE_INLINE size_t Strlen(const UniChar *str)
+    {
+        return ::wcslen( str );
+    }
+
+    UGE_FORCE_INLINE size_t Strlen(const AnsiChar *str)
+    {
+        return ::strlen( str );
+    }
+
+    UGE_FORCE_INLINE Int32 Vsnprintf(AnsiChar *buffer, size_t count, const AnsiChar *format, va_list arg)
+    {
+        return ::vsnprintf_s( buffer, count, _TRUNCATE, format, arg);
+    }
+
+    UGE_FORCE_INLINE Int32 Vsnprintf(UniChar *buffer, size_t count, const UniChar *format, va_list arg)
+    {
+        return ::_vsnwprintf_s( buffer, count, _TRUNCATE, format, arg );
     }
 }

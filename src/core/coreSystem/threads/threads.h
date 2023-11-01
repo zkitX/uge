@@ -30,9 +30,35 @@ namespace uge
         TimeCritical
     };
 
+    template<typename TLockType>
+    class ScopedLock
+    {
+        UGE_NOCLASSCOPY(ScopedLock)
+
+    private:
+        TLockType& m_lock;
+
+    public:
+        ScopedLock( TLockType& lock );
+        ~ScopedLock();
+    };
+
+    template<typename TLockType>
+    class ScopedSharedLock
+    {
+        UGE_NOCLASSCOPY(ScopedSharedLock)
+
+    private:
+        TLockType& m_sharedLock;
+    public:
+        ScopedSharedLock( TLockType& sharedLock );
+        ~ScopedSharedLock();
+    };
+
     //////////////////////////////////////////////////////////////////////////
     // Mutex
     //////////////////////////////////////////////////////////////////////////
+    
     class Mutex
     {
         friend class ConditionVariable;
@@ -53,6 +79,7 @@ namespace uge
     //////////////////////////////////////////////////////////////////////////
     // Semaphore
     //////////////////////////////////////////////////////////////////////////
+
     class Semaphore
     {
     private:
@@ -72,6 +99,7 @@ namespace uge
     //////////////////////////////////////////////////////////////////////////
     // ConditionVariable
     //////////////////////////////////////////////////////////////////////////
+
     class ConditionVariable
     {
     private:
@@ -92,6 +120,7 @@ namespace uge
     //////////////////////////////////////////////////////////////////////////
     // ThreadId
     //////////////////////////////////////////////////////////////////////////
+
     struct ThreadId
     {
         constexpr ThreadId() : id( 0 ) {}
@@ -133,6 +162,7 @@ namespace uge
     };
 
     constexpr size_t g_MaxThreadNameLength = 32;
+    constexpr UInt32 g_kDefaultThreadStackSize = 2 * 1024 * 1024; // 2 MB
     
     void Thread_Yield();
     void Thread_Sleep( TimeoutMs_t ms );
@@ -144,15 +174,17 @@ namespace uge
     //////////////////////////////////////////////////////////////////////////
     // Thread
     //////////////////////////////////////////////////////////////////////////
+
     class Thread
     {
         UGE_NOCLASSCOPY(Thread)
     private:
         Thread_t        m_thread;
+        UInt32          m_stackSize;
         AnsiChar        m_threadName[g_MaxThreadNameLength];
 
     public:
-        Thread( const Char* threadName );
+        Thread( const AnsiChar* threadName, const UInt32 stackSize = g_kDefaultThreadStackSize );
         virtual ~Thread();
         void Join();
         void Detach();
@@ -163,9 +195,11 @@ namespace uge
 
         void SetAffinityMask( AffinityMask_t mask );
         void SetPriority( EThreadPriority threadPriority );
+        void SetPriorityBoost( Bool disablePriorityBoost );
 
-        UGE_INLINE Bool operator==( const Thread& other ) const;
-        UGE_INLINE Bool operator!=( const Thread& other ) const;
+        UGE_INLINE const Bool IsValid() const { return m_thread != nullptr; };
+        UGE_INLINE Bool operator==( const Thread& other ) const { return m_thread == other.m_thread; };
+        UGE_INLINE Bool operator!=( const Thread& other ) const { return m_thread != other.m_thread; };
     };
 }
 

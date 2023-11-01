@@ -83,4 +83,95 @@ namespace uge
         }
     }
 #pragma warning(pop)
+
+    static UInt32 UGE_STDCALL ThreadEntry( void* userData )
+    {
+        Thread* thread = reinterpret_cast<Thread*>(userData);
+        UGE_ASSERT( thread, "Thread is null!" );
+        
+        if (thread)
+        {
+            Thread_SetName( thread->GetThreadName() );
+            ::CoInitializeEx( nullptr, COINIT_MULTITHREADED );
+            thread->ThreadFunc();
+        }
+
+        return 0;
+    }
+
+    Thread::Thread(const AnsiChar *threadName, const UInt32 stackSize)
+        : m_stackSize( stackSize )
+    {
+        UGE_ASSERT( threadName, "Thread name cannot be null!" );
+        UGE_ASSERT( Strlen( threadName ) <= g_MaxThreadNameLength, "Thread name cannot be longer than %d characters!", g_MaxThreadNameLength );
+
+        Strcpy( m_threadName, threadName, g_MaxThreadNameLength );
+    }
+
+    Thread::~Thread()
+    {
+    }
+
+    void Thread::Join()
+    {
+        if ( IsValid() )
+        {
+            const WaitResult_t result = WaitForSingleObject( m_thread, INFINITE );
+            UGE_ASSERT( result == WAIT_OBJECT_0, "Failed to wait for thread!" );
+            ::CloseHandle( m_thread );
+            m_thread = HANDLE();
+        }
+    }
+
+    void Thread::Detach()
+    {
+        if ( IsValid() )
+        {
+            ::CloseHandle( m_thread );
+            m_thread = HANDLE();
+        }
+    }
+
+    void Thread::Init()
+    {
+        UGE_ASSERT( !IsValid(), "Thread already started!" );
+
+        const UInt32 flags = CREATE_SUSPENDED | STACK_SIZE_PARAM_IS_A_RESERVATION;
+
+        m_thread = reinterpret_cast<Thread_t>(::_beginthreadex( nullptr, m_stackSize, ThreadEntry, this, 0, nullptr ));
+        UGE_ASSERT( m_thread != INVALID_HANDLE_VALUE, "Failed to create thread!" );
+
+        Int32 priority = Normal;
+        ::SetThreadPriority( m_thread, priority );
+        ::ResumeThread( m_thread );
+    }
+
+    void Thread::SetAffinityMask(AffinityMask_t mask)
+    {
+        UGE_ASSERT( IsValid(), "Thread is not valid!" );
+
+        if ( IsValid() )
+        {
+            UGE_CHECK_WINAPI(::SetThreadAffinityMask( m_thread, mask ));
+        }
+    }
+
+    void Thread::SetPriority(EThreadPriority threadPriority)
+    {
+        UGE_ASSERT( IsValid(), "Thread is not valid!" );
+
+        if (IsValid())
+        {
+            UGE_CHECK_WINAPI(::SetThreadPriority( m_thread, threadPriority ));
+        }
+    }
+    void Thread::SetPriorityBoost(Bool disablePriorityBoost)
+    {
+        UGE_ASSERT( IsValid(), "Thread is not valid!" );
+
+        if ( IsValid() )
+        {
+            UGE_CHECK_WINAPI(::SetThreadPriorityBoost( m_thread, disablePriorityBoost ));
+        }
+    }
 }

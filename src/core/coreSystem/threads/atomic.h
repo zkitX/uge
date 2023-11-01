@@ -203,6 +203,12 @@ namespace uge
             }
         };
     }
+
+    typedef atomic::Atomic8::TAtomic8 AtomicByte;
+    typedef atomic::Atomic16::TAtomic16 AtomicShort;
+    typedef atomic::Atomic32::TAtomic32 AtomicInt;
+    typedef atomic::Atomic64::TAtomic64 AtomicLong;
+    typedef atomic::AtomicPtr::TAtomicPtr AtomicPointer;
 }
 
 #endif

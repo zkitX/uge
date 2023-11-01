@@ -1,12 +1,72 @@
 #include "build.h"
 
+#include "file/file.h"
 #include <DbgHelp.h>
-#include "CStackTrace.h"
+#include "dbgUtils.h"
 
 namespace uge
 {
     namespace dbg
     {
+        static CAssert g_assert;
+        static CTrace g_trace;
+
+        // CTrace
+        CTrace::CTrace()
+            : traceFile(nullptr)
+        {
+            Memzero(buffer, sizeof(buffer));
+        }
+
+        CTrace::~CTrace()
+        {
+            if (traceFile != nullptr)
+            {
+                file::FileFlush(traceFile);
+                file::FileClose(traceFile);
+            }
+        }
+
+        void CTrace::ClearBuffer()
+        {
+            Memzero(buffer, sizeof(buffer));
+        }
+
+        void CTrace::Trace(const AnsiChar *msg, ...)
+        {
+            va_list argList;
+            va_start(argList, msg);
+            Trace(msg, argList);
+            va_end(argList);
+        }
+
+        void CTrace::Trace(const AnsiChar *msg, va_list argList)
+        {
+            Int32 bufSize = BUFFER_SIZE;
+            char* buf = buffer;
+            
+            ClearBuffer();
+            const Int32 len = Vsnprintf( buf, bufSize, msg, argList );
+            if (len > 0 && len + 1 < bufSize)
+            {
+                if (buf[len - 1] != '\r' && buf[len-1] != '\n')
+                {
+                    buf[len] = '\n';
+                    buf[len + 1] = '\0';
+                }
+            }
+
+            if (IsDebuggerPresent())
+            {
+                OutputDebugStringA( buffer );
+            }
+            else
+            {
+                fputs( buffer, traceFile );
+            }
+        }
+
+        // CStackTrace
         CStackTrace::CStackTrace()
         {
             Reset();
@@ -32,6 +92,7 @@ namespace uge
                 if (suspendCount == static_cast<DWORD>(-1))
                 {
                     // TODO: Trace failed to suspend thread
+                    UGE_TRACE("[%s] Failed to suspend thread [%u]: 0x%08X (%hs)", __FUNCTION__, ::GetLastError());
                     return false;
                 }
             }
@@ -102,7 +163,7 @@ namespace uge
             IMAGEHLP_LINE64 line;
             DWORD dwDisplacement;
 
-            memset(&line, 0, sizeof(line));
+            Memzero(&line, sizeof(line));
             line.SizeOfStruct = sizeof(IMAGEHLP_LINE64);
 
             if (SymGetLineFromAddr64(m_hProcess, addrInfo->m_address, &dwDisplacement, &line))
@@ -145,12 +206,11 @@ namespace uge
             m_stackFrame.AddrFrame.Offset = m_tContext.Rbp;
             m_stackFrame.AddrStack.Offset = m_tContext.Rsp;
 
-            SYMBOL_INFO *symbolInfo = static_cast<SYMBOL_INFO *>(malloc(sizeof(SYMBOL_INFO) + MAX_SYM_NAME));
-            if (symbolInfo == NULL)
-            {
-                return false;
-            }
-            memset(symbolInfo, 0, sizeof(symbolInfo) + MAX_SYM_NAME);
+            SYMBOL_INFO *symbolInfo = static_cast<SYMBOL_INFO *>(Malloc(sizeof(SYMBOL_INFO) + MAX_SYM_NAME));
+            UGE_ASSERT(symbolInfo != nullptr, "Failed to malloc pointer");
+            Memzero(symbolInfo, sizeof(symbolInfo) + MAX_SYM_NAME);
+
+            UGE_TRACE("[CStackTrace::GetFullStackFrame] StackWalk64");
 
             for (UInt32 i = 0; i < MAX_STACK_TRACE_FRAMES; ++i)
             {
@@ -166,7 +226,7 @@ namespace uge
                     nullptr);
                 if (!ok)
                 {
-                    // TODO: log finished
+                    UGE_TRACE("[CStackTrace::GetFullStackFrame] StackWalk64 failed in %u steps", i);
                     break;
                 }
 
@@ -183,7 +243,18 @@ namespace uge
                 ++m_addrInfo.m_numFrameAddresses;
             }
 
+            UGE_TRACE("[CStackTrace::GetFullStackFrame] Return");
+
             return true;
+        }
+
+        // CAssert
+        void CAssert::OnAssert( const AnsiChar* filename, UInt32 line, const AnsiChar* expression, const AnsiChar* message, ... )
+        {
+            if (m_isHandlingAssert != 0)
+            {
+                
+            }
         }
     }
 }
