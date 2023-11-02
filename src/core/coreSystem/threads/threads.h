@@ -1,6 +1,8 @@
 #ifndef __CORESYSTEM_THREADS_H__
 #define __CORESYSTEM_THREADS_H__
 
+#include "debugging/dbgUtils.h"
+
 #define UGE_NOCLASSCOPY(class_)     \
     private:                        \
         class_(const class_&);      \
@@ -197,7 +199,7 @@ namespace uge
         void SetPriority( EThreadPriority threadPriority );
         void SetPriorityBoost( Bool disablePriorityBoost );
 
-        UGE_INLINE const Bool IsValid() const { return m_thread != nullptr; };
+        UGE_INLINE const Bool IsValid() const { return m_thread != Thread_t(); };
         UGE_INLINE Bool operator==( const Thread& other ) const { return m_thread == other.m_thread; };
         UGE_INLINE Bool operator!=( const Thread& other ) const { return m_thread != other.m_thread; };
     };

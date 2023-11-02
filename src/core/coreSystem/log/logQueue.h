@@ -1,6 +1,7 @@
 #ifndef __CORESYSTEM_LOGQUEUE_H__
 #define __CORESYSTEM_LOGQUEUE_H__
 
+#include "threads/threads.h"
 #include "threads/atomic.h"
 
 namespace uge
@@ -21,17 +22,18 @@ namespace uge
         private:
             struct Entry
             {
-                atomic::Atomic32 position;
+                AtomicInt position;
                 TLogMessage message;
             };
 
             constexpr static UInt32 c_logQueueSize = 128;
             constexpr static UInt32 c_logQueueSpinMs = 1;
             constexpr static UInt32 c_logQueueYieldMs = 10;
+            constexpr static UInt32 c_logQueueMask = c_logQueueSize - 1;
 
-            atomic::Atomic32    m_queuePosition;
-            atomic::Atomic32    m_dequeuePosition;
-            Entry               m_entries[c_logQueueSize];
+            AtomicInt            m_queuePosition;
+            AtomicInt            m_dequeuePosition;
+            Entry                m_entries[c_logQueueSize];
         };
     }
 }

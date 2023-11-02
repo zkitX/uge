@@ -1,16 +1,12 @@
 #include "build.h"
 
 #include "file/file.h"
-#include <DbgHelp.h>
 #include "dbgUtils.h"
 
 namespace uge
 {
     namespace dbg
     {
-        static CAssert g_assert;
-        static CTrace g_trace;
-
         // CTrace
         CTrace::CTrace()
             : traceFile(nullptr)
@@ -258,3 +254,6 @@ namespace uge
         }
     }
 }
+
+uge::dbg::CAssert g_assert;
+uge::dbg::CTrace g_trace;

@@ -31,7 +31,7 @@ namespace uge
     UGE_FORCE_INLINE void *Malloc( size_t size)
     {
         void* ptr = ::malloc( size );
-        if (ptr = nullptr)
+        if (ptr == nullptr)
         {
             return nullptr;
         }
@@ -41,6 +41,16 @@ namespace uge
     UGE_FORCE_INLINE Bool Strcpy(AnsiChar *dest, const AnsiChar *src, size_t destSize, size_t srcSize)
     {
         return ::strncpy_s( dest, destSize, src, srcSize ) == 0;
+    }
+
+    UGE_FORCE_INLINE Bool Strcat(UniChar *dest, const UniChar *src, size_t destSize, size_t srcSize)
+    {
+        return ::wcsncat_s( dest, destSize, src, srcSize ) == 0;
+    }
+
+    UGE_FORCE_INLINE Bool Strcat(AnsiChar *dest, const AnsiChar *src, size_t destSize, size_t srcSize)
+    {
+        return ::strncat_s( dest, destSize, src, srcSize ) == 0;
     }
 
     UGE_FORCE_INLINE Bool Strcpy( UniChar* dest, const UniChar* src, size_t destSize, size_t srcSize )
@@ -56,6 +66,26 @@ namespace uge
     UGE_FORCE_INLINE size_t Strlen(const AnsiChar *str)
     {
         return ::strlen( str );
+    }
+
+    UGE_FORCE_INLINE AnsiChar *Strchr(AnsiChar *str, AnsiChar c)
+    {
+        return ::strchr( str, c );
+    }
+
+    UGE_FORCE_INLINE const AnsiChar *Strchr(const AnsiChar *str, AnsiChar c)
+    {
+        return ::strchr( str, c );
+    }
+    
+    UGE_FORCE_INLINE UniChar *Strchr(UniChar *str, UniChar c)
+    {
+        return ::wcschr( str, c );
+    }
+
+    UGE_FORCE_INLINE const UniChar *Strchr(const UniChar *str, UniChar c)
+    {
+        return ::wcschr( str, c );
     }
 
     UGE_FORCE_INLINE Int32 Vsnprintf(AnsiChar *buffer, size_t count, const AnsiChar *format, va_list arg)

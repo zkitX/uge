@@ -5,7 +5,7 @@ namespace uge
 {
     namespace log
     {
-        class Log;
+        class CLog;
 
         class LogThread : public Thread
         {
@@ -13,12 +13,12 @@ namespace uge
             LogThread();
             virtual ~LogThread();
             
-            virtual void Start(Log* log);
+            virtual void Start(CLog* log);
             virtual void Stop();
 
             virtual void ThreadFunc();
         private:
-            Log* m_log;
+            CLog* m_log;
             Bool m_running;
         };
     }

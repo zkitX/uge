@@ -5,8 +5,6 @@ namespace uge
 {
     namespace log
     {
-        const UInt32 c_logQueueMask = c_logQueueSize - 1;
-
         template <typename TLogMessage>
         inline LogQueue<TLogMessage>::LogQueue()
             : m_queuePosition(0),
@@ -74,7 +72,7 @@ namespace uge
                 if (difference == 0)
                 {
                     const UInt32 newQueuePosition = position + 1;
-                    if (atomic::Atomic32::CompareExchange32(&m_dequeuePosition, newQueuePosition, position) == position)
+                    if (atomic::Atomic32::CompareExchange(&m_dequeuePosition, newQueuePosition, position) == position)
                     {
                         message = std::move(entry->message);
                         atomic::Atomic32::Exchange(&entry->position, position + c_logQueueSize);
@@ -100,7 +98,7 @@ namespace uge
 
             if (timeSinceLastOperation > std::chrono::milliseconds(c_logQueueSpinMs))
             {
-                if (timeSinceLastOperation > std::chrono::milliseconds(c_logQueueYieldMs))
+                if (timeSinceLastOperation < std::chrono::milliseconds(c_logQueueYieldMs))
                 {
                     Thread_Yield();
                 }

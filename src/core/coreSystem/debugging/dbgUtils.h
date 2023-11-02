@@ -1,6 +1,8 @@
 #ifndef __CORESYSTEM_DBGUTILS_H__
 #define __CORESYSTEM_DBGUTILS_H__
 
+#include <DbgHelp.h>
+
 namespace uge
 {
     namespace dbg
@@ -105,17 +107,17 @@ namespace uge
             EAssertType m_assertType;
             Bool m_isHandlingAssert;
         };
-
-        extern CAssert g_assert;
-        extern CTrace g_trace;
     }
 }
+
+extern uge::dbg::CAssert        g_assert;
+extern uge::dbg::CTrace         g_trace;
 
 #ifdef UGE_ASSERTS_ENABLED
     #define UGE_ASSERT(cond, msg, ...)\
         do {\
             if ( !(cond) ) {\
-                uge::dbg::g_assert.OnAssert( __FILE__, __LINE__, #cond, msg, ##__VA_ARGS__ );\
+                g_assert.OnAssert( __FILE__, __LINE__, #cond, msg, ##__VA_ARGS__ );\
                 __debugbreak();\
             }\
         } while ( (void)0, 0 )
@@ -130,14 +132,14 @@ namespace uge
 
     #define UGE_TRACE(msg, ...)\
         do {\
-            uge::dbg::g_trace.Trace( msg, ##__VA_ARGS__ );\
+            g_trace.Trace( msg, ##__VA_ARGS__ );\
         } while ( (void)0, 0 )
 
     #define UGE_CHECK_WINAPI(expr) \
         do { \
             Bool result = ((expr) != 0); \
             DWORD error = GetLastError(); \
-            UGE_ASSERT( result, #expr, "\nGetLastError() result: 0x%08X", error ); \
+            UGE_ASSERT( !result, #expr, "\nGetLastError() result: 0x%08X", error ); \
         } while (0)
 
 #else

@@ -1,4 +1,5 @@
 #include "build.h"
+
 #include "logThread.h"
 #include "log.h"
 
@@ -20,7 +21,7 @@ namespace uge
         {
         }
 
-        void LogThread::Start(Log* log)
+        void LogThread::Start(CLog* log)
         {
             m_log = log;
             m_running = true;
@@ -38,7 +39,10 @@ namespace uge
         {
             while (m_running)
             {
-                // TODO: Consume the next log message
+                while (m_log->ConsumeNextLog())
+                {
+                    continue;
+                }
             }
         }
     }

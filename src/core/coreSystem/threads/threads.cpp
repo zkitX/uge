@@ -2,16 +2,30 @@
 
 namespace uge
 {
+    /**
+     * @brief Yields the current thread's time slice to another thread that is ready to run on the current processor.
+     * 
+     */
     void Thread_Yield()
     {
         (void)::SwitchToThread();
     }
 
+    /**
+     * @brief Suspends the execution of the current thread for a specified amount of time.
+     * 
+     * @param ms The time, in milliseconds, for which to suspend the execution of the current thread.
+     */
     void Thread_Sleep( TimeoutMs_t ms )
     {
         ::Sleep( ms );
     }
 
+    /**
+     * @brief Sets the affinity mask for the current thread.
+     * 
+     * @param affinityMask The affinity mask to set for the current thread.
+     */
     void Thread_SetAffinity( AffinityMask_t affinityMask )
     {
         if ( affinityMask != 0 )
@@ -39,7 +53,7 @@ namespace uge
             return;
         }
 
-        THREADNAME_INFO info;
+        THREADNAME_INFO info{};
         info.dwType = 0x1000;
         info.szName = threadName;
         info.dwThreadID = g_CallerThread;
@@ -57,7 +71,13 @@ namespace uge
     }
 
 #pragma warning(push)  
-#pragma warning(disable: 6387)  
+#pragma warning(disable: 6387)
+
+    /**
+     * @brief Suspends the execution of the specified thread.
+     * 
+     * @param id The ID of the thread to suspend.
+     */
     void Thread_Suspend( ThreadId id )
     {
         DWORD threadId = static_cast<DWORD>(id.Get());
@@ -72,6 +92,12 @@ namespace uge
             CloseHandle( thread );
         }
     }
+    
+    /**
+     * @brief Resumes a previously suspended thread.
+     * 
+     * @param id The ID of the thread to be resumed.
+     */
     void Thread_Resume( ThreadId id )
     {
         DWORD threadId = static_cast<DWORD>(id.Get());
@@ -82,6 +108,7 @@ namespace uge
             CloseHandle( thread );
         }
     }
+    
 #pragma warning(pop)
 
     static UInt32 UGE_STDCALL ThreadEntry( void* userData )
@@ -101,6 +128,7 @@ namespace uge
 
     Thread::Thread(const AnsiChar *threadName, const UInt32 stackSize)
         : m_stackSize( stackSize )
+        , m_thread()
     {
         UGE_ASSERT( threadName, "Thread name cannot be null!" );
         UGE_ASSERT( Strlen( threadName ) <= g_MaxThreadNameLength, "Thread name cannot be longer than %d characters!", g_MaxThreadNameLength );
@@ -162,7 +190,7 @@ namespace uge
 
         if (IsValid())
         {
-            UGE_CHECK_WINAPI(::SetThreadPriority( m_thread, threadPriority ));
+            UInt32 test = ::SetThreadPriority( m_thread, threadPriority );
         }
     }
     void Thread::SetPriorityBoost(Bool disablePriorityBoost)

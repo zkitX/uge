@@ -1,4 +1,5 @@
 #include "build.h"
+
 #include "readWriteSpinLock.h"
 
 namespace uge
@@ -71,10 +72,6 @@ namespace uge
         }
 
         return false;
-    }
-
-    void RWSpinLock::Unlock()
-    {
     }
 
     /**

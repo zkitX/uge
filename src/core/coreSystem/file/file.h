@@ -7,10 +7,10 @@ namespace uge
 {
     namespace file
     {
-        Bool FileOpen( FILE** file, const Char* fileName, const Char* mode );
+        Bool FileOpen( FILE** file, const AnsiChar* fileName, const AnsiChar* mode );
         Bool FileClose( FILE* file );
         Bool FileFlush( FILE* file );
-        void FilePrint( FILE* file, const Char* buffer );
+        void FilePrint( FILE* file, const AnsiChar* buffer );
     }
 }
 
