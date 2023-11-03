@@ -21,8 +21,8 @@ namespace uge
     typedef int64_t         Int64;
     typedef uint64_t        UInt64;
 
-    typedef float           F32;
-    typedef double          F64;
+    typedef float           Float;
+    typedef double          Double;
 
     typedef wchar_t         UniChar;
     typedef char            AnsiChar;
