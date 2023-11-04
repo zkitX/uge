@@ -44,6 +44,9 @@ namespace uge::math
         bool operator==(const Vec3 &other) const;
         bool operator!=(const Vec3 &other) const;
 
+        Float &operator[](UInt32 index);
+        const Float &operator[](UInt32 index) const;
+
         Float Length() const;
         Float LengthSquared() const;
 

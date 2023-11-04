@@ -158,6 +158,20 @@ namespace uge::math
         return x != other.x || y != other.y || z != other.z;
     }
 
+    UGE_FORCE_INLINE Float &Vec3::operator[](UInt32 index)
+    {
+        UGE_ASSERT(index < 3, "Index out of bounds");
+
+        return v[index];
+    }
+
+    UGE_FORCE_INLINE const Float &Vec3::operator[](UInt32 index) const
+    {
+        UGE_ASSERT(index < 3, "Index out of bounds");
+
+        return v[index];
+    }
+
     UGE_FORCE_INLINE Float Vec3::Length() const
     {
         return Sqrt(x * x + y * y + z * z);
@@ -234,6 +248,12 @@ namespace uge::math
     {
         return Vec3(math::Max(a.x, b.x), math::Max(a.y, b.y), math::Max(a.z, b.z));
     }
+
+    const Vec3 Vec3::Zero = Vec3(0.0f, 0.0f, 0.0f);
+    const Vec3 Vec3::One = Vec3(1.0f, 1.0f, 1.0f);
+    const Vec3 Vec3::UnitX = Vec3(1.0f, 0.0f, 0.0f);
+    const Vec3 Vec3::UnitY = Vec3(0.0f, 1.0f, 0.0f);
+    const Vec3 Vec3::UnitZ = Vec3(0.0f, 0.0f, 1.0f);
 }
 
 #endif // __COREMATH_MATH_VECTOR3_INL__

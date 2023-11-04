@@ -1,4 +1,3 @@
-#include "vector2.h"
 #ifndef __COREMATH_MATH_VECTOR2_INL__
 #define __COREMATH_MATH_VECTOR2_INL__
 
