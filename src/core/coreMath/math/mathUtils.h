@@ -36,6 +36,24 @@ namespace uge::math
     }
 
     template <typename T>
+    UGE_INLINE constexpr T Abs(const T &value)
+    {
+        return (value >= T{0}) ? value : -value;
+    }
+
+    template <typename T>
+    UGE_INLINE constexpr T Sign(const T &value)
+    {
+        return (value > T{0}) ? T{1} : ((value < T{0}) ? T{-1} : T{0});
+    }
+
+    template <typename T>
+    UGE_INLINE constexpr T Sqr(const T &value)
+    {
+        return value * value;
+    }
+
+        template <typename T>
     UGE_INLINE constexpr T Acos(const T &value)
     {
         T sum = 0;
@@ -95,30 +113,12 @@ namespace uge::math
         while (true)
         {
             term *= -xSquare / ((2 * n) * (2 * n + 1));
-            if (Abs(term) < 0.00001) break;
+            if (math::Abs(term) < 0.00001) break;
             sum += term;
             n++;
         }
 
         return sum;
-    }
-
-    template <typename T>
-    UGE_INLINE constexpr T Abs(const T &value)
-    {
-        return (value >= T{0}) ? value : -value;
-    }
-
-    template <typename T>
-    UGE_INLINE constexpr T Sign(const T &value)
-    {
-        return (value > T{0}) ? T{1} : ((value < T{0}) ? T{-1} : T{0});
-    }
-
-    template <typename T>
-    UGE_INLINE constexpr T Sqr(const T &value)
-    {
-        return value * value;
     }
 
     template <typename T>
@@ -135,6 +135,21 @@ namespace uge::math
         }
 
         return x;
+    }
+
+    UGE_INLINE constexpr Float DegToRad(const Float &value)
+    {
+        return value * (M_PI / 180.0f);
+    }
+
+    UGE_INLINE constexpr Float RadToDeg(const Float &value)
+    {
+        return value * (180.0f / M_PI);
+    }
+
+    UGE_INLINE constexpr Float DegToRad_Half(const Float &value)
+    {
+        return value * (M_PI / 360.0f);
     }
 
     UGE_INLINE Int32 Pow(Int32 base, Int32 exponent)

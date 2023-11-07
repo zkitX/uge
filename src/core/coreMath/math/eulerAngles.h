@@ -8,11 +8,11 @@ namespace uge::math
 
     struct EulerAngles
     {
-        Float Roll;
-        Float Pitch;
-        Float Yaw;
+        Float Roll = 0.f;
+        Float Pitch = 0.f;
+        Float Yaw = 0.f;
 
-        EulerAngles();
+        EulerAngles() = default;
         EulerAngles(const Vec3 &v);
         EulerAngles(const Float f[3]);
         EulerAngles(const Float Roll, const Float Pitch, const Float Yaw);
@@ -45,14 +45,11 @@ namespace uge::math
         Bool operator==(const EulerAngles &other) const;
         Bool operator!=(const EulerAngles &other) const;
 
-        Float &operator[](UInt32 index);
-        const Float &operator[](UInt32 index) const;
-
         EulerAngles &Normalize();
+        static Float NormalizeAngle(Float angle);
         static Float NormalizeAngle180(Float angle);
-        static Float NormalizeAngle360(Float angle);
 
-        static Float YawFromXY(const Vec2 &v);
+        static Float YawFromXY(const Float x, const Float y);
         static Double YawFromXY(const Double x, const Double y);
         static Vec4 YawToVector(const Float yaw);
         static Vec2 YawToVector2(const Float yaw);

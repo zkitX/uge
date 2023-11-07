@@ -1,75 +1,95 @@
-#ifndef __COREMATH_MATH_VECTOR_H__
-#define __COREMATH_MATH_VECTOR_H__
+#ifndef __COREMATH_MATH_VECTOR4_H__
+#define __COREMATH_MATH_VECTOR4_H__
 
 namespace uge::math
 {
-    struct Vec4
+    enum DotProductTypeMask
     {
-        union 
+        DotProduct2D = 0x3F,
+        DotProduct3D = 0x7F,
+        DotProduct4D = 0xFF
+    };
+
+    enum EqualMask
+    {
+        EqualMask2D = 0x03,
+        EqualMask3D = 0x07,
+        EqualMask4D = 0x0F
+    };
+
+    UGE_ALIGNED_STRUCT(Vec4, 16)
+    {
+        union
         {
-            struct { Float x, y, z, w; };
-            Float v[4];
+            struct
+            {
+                Float x, y, z, w;
+            };
+            __m128 vec;
         };
 
-        Vec4();
-        Vec4(Float x, Float y, Float z, Float w);
-        Vec4(const Vec4& other);
+        UGE_FORCE_INLINE Vec4() = default;
 
-        Vec4& operator=(const Vec4& other);
+        Vec4(const Vec2 &v);
+        Vec4(const Vec3 &v, const Float w = 1.f);
+        Vec4(const Vec4 &v);
+        Vec4(const Float f[4]);
+        Vec4(const Float x, const Float y, const Float z, const Float w = 1.f);
+        Vec4(const Float f);
+        Vec4(const __m128 &v);
+        Vec4(nullptr_t) = delete;
 
-        void Set(Float x, Float y, Float z, Float w);
+        operator __m128() const { return *reinterpret_cast<const __m128 *>(&x); }
 
-        Vec4 operator+(const Vec4& other) const;
-        Vec4 operator-(const Vec4& other) const;
-        Vec4 operator*(const Vec4& other) const;
-        Vec4 operator/(const Vec4& other) const;
-
-        Vec4& operator+=(const Vec4& other);
-        Vec4& operator-=(const Vec4& other);
-        Vec4& operator*=(const Vec4& other);
-        Vec4& operator/=(const Vec4& other);
-
-        Vec4 operator+(Float scalar) const;
-        Vec4 operator-(Float scalar) const;
-        Vec4 operator*(Float scalar) const;
-        Vec4 operator/(Float scalar) const;
-
-        Vec4& operator+=(Float scalar);
-        Vec4& operator-=(Float scalar);
-        Vec4& operator*=(Float scalar);
-        Vec4& operator/=(Float scalar);
+        // operators
+        Float &operator[](const size_t i);
+        const Float &operator[](const size_t i) const;
 
         Vec4 operator-() const;
+        Vec4 operator+(const Vec4 &v) const;
+        Vec4 operator-(const Vec4 &v) const;
+        Vec4 operator*(const Vec4 &v) const;
+        Vec4 operator/(const Vec4 &v) const;
 
-        Bool operator==(const Vec4& other) const;
-        Bool operator!=(const Vec4& other) const;
+        Vec4 &operator+=(const Vec4 &v);
+        Vec4 &operator-=(const Vec4 &v);
+        Vec4 &operator*=(const Vec4 &v);
+        Vec4 &operator/=(const Vec4 &v);
 
-        Float& operator[](UInt32 index);
-        const Float& operator[](UInt32 index) const;
+        Bool operator==(const Vec4 &v) const;
+        Bool operator!=(const Vec4 &v) const;
+        Bool operator<(const Vec4 &v) const;
 
-        Float Length() const;
-        Float LengthSquared() const;
+        const Vec2& ToVec2() const;
+        Vec2& ToVec2();
+        const Vec3& ToVec3() const;
+        Vec3& ToVec3();
 
-        Float Dot(const Vec4& other) const;
+        static Bool Equal(const Vec4 a, const Vec4 b, const EqualMask maskType);
+        static Float Dot(const Vec4 &a, const Vec4 &b, const DotProductTypeMask maskType);
+        Float Dot(const Vec4 &b, const DotProductTypeMask maskType) const;
 
-        Vec4& Normalize();
-        Vec4 Normalized() const;
+        Float Magnitude(const DotProductTypeMask maskType) const;
+        Float MagnitudeSquared(const DotProductTypeMask maskType) const;
 
-        Vec4 Lerp(const Vec4& other, Float t) const;
-        Vec4 Slerp(const Vec4& other, Float t) const;
+        __m128 Normalize(__m128 v) const;
+        Float Normalize(const DotProductTypeMask maskType);
+        Vec4 Normalized(const DotProductTypeMask maskType);
 
-        Vec4 Min(const Vec4& a, const Vec4& b);
-        Vec4 Max(const Vec4& a, const Vec4& b);
+        // distance calculations
+        Float DistanceTo(const Vec4 &v) const;
+        Float DistanceSquaredTo(const Vec4 &v) const;
+        Float DistanceTo2D(const Vec4 &v) const;
+        Float DistanceSquaredTo2D(const Vec4 &v) const;
+        Float DistanceToEdge(const Vec4 &v0, const Vec4 &v1) const;
+        Float DistanceToEdge2D(const Vec4 &v0, const Vec4 &v1) const;
+        Float DistanceToEdgeSquared(const Vec4 &v0, const Vec4 &v1) const;
+        Vec4 NearestPointOnEdge(const Vec4 &v0, const Vec4 &v1) const;
 
-        static const Vec4 Zero;
-        static const Vec4 One;
-        static const Vec4 UnitX;
-        static const Vec4 UnitY;
-        static const Vec4 UnitZ;
-        static const Vec4 UnitW;
+        static Vec4 Cross(const Vec4 &a, const Vec4 &b, const Float w);
     };
-}
+} // namespace uge::math
 
 #include "vector4.inl"
 
-#endif  // __COREMATH_MATH_VECTOR_H__
+#endif // __COREMATH_MATH_VECTOR4_H__

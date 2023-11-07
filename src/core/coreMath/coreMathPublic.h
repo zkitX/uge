@@ -4,9 +4,12 @@
 #include "core/coreSystem/build.h"
 
 #include "math/mathUtils.h"
+#include "math/simdUtils.h"
 #include "math/vector/vector2.h"
 #include "math/vector/vector3.h"
 #include "math/vector/vector4.h"
+
+#include "math/matrix/matrix.h"
 #include "math/eulerAngles.h"
 
 #endif  // __COREMATH_PUBLIC_H__

@@ -1,3 +1,4 @@
+#include "vector2.h"
 #ifndef __COREMATH_MATH_VECTOR2_INL__
 #define __COREMATH_MATH_VECTOR2_INL__
 
@@ -175,6 +176,16 @@ namespace uge::math
         return x * other.x + y * other.y;
     }
 
+    UGE_FORCE_INLINE Float Vec2::Magnitude() const
+    {
+        return SqrtSSE(MagnitudeSquared());
+    }
+
+    UGE_FORCE_INLINE Float Vec2::MagnitudeSquared() const
+    {
+        return x*x + y*y;
+    }
+
     UGE_FORCE_INLINE Vec2 Vec2::Normalize() const
     {
         Float length = Length();
@@ -253,9 +264,9 @@ namespace uge::math
         return Vec2(x * cosAngle - y * sinAngle, x * sinAngle + y * cosAngle);
     }
 
-    inline Vec2 Vec2::Rotate(const Vec2 &pivot, Float angle) const
+    inline Vec2 Vec2::Rotate(const Vec2 &axis, Float angle) const
     {
-        return (*this - pivot).Rotate(angle) + pivot;
+        return (*this - axis).Rotate(angle) + axis;
     }
 
     inline Vec2 Vec2::Rotate(const Vec2 &axis, const Vec2 &pivot, Float angle) const

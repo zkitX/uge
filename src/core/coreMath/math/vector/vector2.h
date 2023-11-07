@@ -53,6 +53,8 @@ namespace uge
             Float Length() const;
             Float LengthSquared() const;
             Float Dot( const Vec2& other ) const;
+            Float Magnitude() const;
+            Float MagnitudeSquared() const;
             Vec2 Normalize() const;
             Vec2 Reflect( const Vec2& normal ) const;
             Vec2 Refract( const Vec2& normal, Float eta ) const;
@@ -62,7 +64,6 @@ namespace uge
             Vec2 Slerp( const Vec2& other, Float t ) const;
             Vec2 Nlerp( const Vec2& other, Float t ) const;
             Vec2 Rotate( Float angle ) const;
-            Vec2 Rotate( const Vec2& pivot, Float angle ) const;
             Vec2 Rotate( const Vec2& axis, const Vec2& pivot, Float angle ) const;
             Vec2 Rotate( const Vec2& axis, Float angle ) const;
             Vec2 Rotate( const Vec2& axis, const Vec2& pivot, Float angle, Float scale ) const;

@@ -190,7 +190,7 @@ namespace uge
 
         if (IsValid())
         {
-            UInt32 test = ::SetThreadPriority( m_thread, threadPriority );
+            UGE_CHECK_WINAPI(::SetThreadPriority( m_thread, threadPriority ));
         }
     }
     void Thread::SetPriorityBoost(Bool disablePriorityBoost)
