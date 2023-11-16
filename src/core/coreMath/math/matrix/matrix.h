@@ -50,8 +50,11 @@ namespace uge::math
         const Vec4& GetTranslationRef() const;
         Vec4& GetTranslationRef();
 
-        Matrix& OrthonormInvert();
-        Matrix& FullInvert();
+        Matrix InversedNoScale() const;
+        Matrix& InverseNoScale();
+        Matrix InversedFull() const;
+        Matrix& InverseFull();
+        Matrix Transposed() const;
         Matrix& Transpose();
 
         Vec4 GetColumn(const size_t index) const;
@@ -75,11 +78,16 @@ namespace uge::math
         Vec4 GetAxisY() const;
         Vec4 GetAxisZ() const;
 
-        void GetColumnMajor(Float* data) const;
-        void GetColumnMajor3x4(Float* data) const;
+        void GetColumnMajor(Float* out) const;
+        void GetColumnMajor3x4(Float* out) const;
         void SetColumnMajor3x4(const Float* data);
-
         void SetRowMajor4x3(const Float* data);
+
+        Vec4 Transform(const Vec4& v) const;
+        Vec4 Transform4x4(const Vec4& v) const;
+        Vec4 TransformPoint(const Vec4& v) const;
+        Vec3 TransformPoint(const Vec3& v) const;
+
         static Matrix Mul(const Matrix& a, const Matrix& b);
         Matrix operator*(const Matrix& other) const;
     };

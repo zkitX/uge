@@ -3,6 +3,7 @@
 
 namespace uge::math
 {
+    struct Vec4;
     struct Vec3
     {
         union
@@ -11,9 +12,14 @@ namespace uge::math
             Float v[3];
         };
 
-        Vec3();
+        Vec3() = default;
         Vec3(Float x, Float y, Float z);
         Vec3(const Vec3 &other);
+
+        Vec3( const Vec2& v);
+        Vec3(const Vec4& v);
+        Vec3(const Float f[3]);
+        Vec3( std::nullptr_t ) = delete;
 
         Vec3 &operator=(const Vec3 &other);
 

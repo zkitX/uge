@@ -1,3 +1,4 @@
+#include "vector3.h"
 #ifndef __COREMATH_MATH_VECTOR3_INL__
 #define __COREMATH_MATH_VECTOR3_INL__
 
@@ -15,6 +16,21 @@ namespace uge::math
 
     UGE_FORCE_INLINE Vec3::Vec3(const Vec3 &other)
         : x(other.x), y(other.y), z(other.z)
+    {
+    }
+
+    UGE_FORCE_INLINE Vec3::Vec3(const Vec2 &v)
+        : x(v.x), y(v.y), z(0.0f)
+    {
+    }
+
+    UGE_FORCE_INLINE Vec3::Vec3(const Vec4& v)
+        : x(v.x), y(v.y), z(v.z)
+    {
+    }
+
+    UGE_FORCE_INLINE Vec3::Vec3(const Float f[3])
+        : x(f[0]), y(f[1]), z(f[2])
     {
     }
 
@@ -231,7 +247,7 @@ namespace uge::math
         Float dot = Dot(other);
         dot = Clamp(dot, -1.0f, 1.0f);
 
-        Float theta = Acos(dot) * t;
+        Float theta = ACos(dot) * t;
         Vec3 relative = other - *this * dot;
         relative.Normalize();
 

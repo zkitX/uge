@@ -63,7 +63,7 @@ namespace uge::math
 
         Matrix ToMatrix() const;
         void ToMatrix(Matrix &m) const;
-        void ToAngleVectors(Vec4 &forward, Vec4 &right, Vec4 &up) const;
+        void ToAngleVectors(Vec4* forward, Vec4* right, Vec4* up) const;
         Quaternion ToQuaternion() const;
         void ToQuaternion(Quaternion &q) const;
         Vec4 TransformPoint(const Vec4 &v) const;

@@ -9,7 +9,8 @@
 #include "math/vector/vector3.h"
 #include "math/vector/vector4.h"
 
+#include "math/quaternion/quaternion.h"
 #include "math/matrix/matrix.h"
-#include "math/eulerAngles.h"
+#include "math/eulerAngles/eulerAngles.h"
 
 #endif  // __COREMATH_PUBLIC_H__

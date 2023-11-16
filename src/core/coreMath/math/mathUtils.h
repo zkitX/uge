@@ -17,6 +17,8 @@
 
 namespace uge::math
 {
+    typedef __m128 Vector;
+
     template <typename T>
     UGE_INLINE constexpr const T &Max(const T &a, const T &b)
     {
@@ -53,88 +55,107 @@ namespace uge::math
         return value * value;
     }
 
-        template <typename T>
-    UGE_INLINE constexpr T Acos(const T &value)
+    UGE_INLINE Float ASin(Float f)
     {
-        T sum = 0;
-        T term = 1;
-        T xSquare = value * value;
-        T tempValue = value;
-        int n = 0;
-
-        while (true)
-        {
-            term = term * tempValue;
-            T y = term / (2 * n + 1);
-            if (y < 0.00001)
-                break;
-            if (n % 2 == 0)
-                sum += y;
-            else
-                sum -= y;
-            tempValue = tempValue * xSquare;
-            n++;
-        }
-
-        return (M_PI / 2) - sum;
+        UGE_ASSERT(Abs(f) <= 1.0f, "Value must be in range [-1, 1]");
+        return ::asin(f);
     }
 
-    template <typename T>
-    UGE_INLINE constexpr T Cos(const T &value)
+    UGE_INLINE Float ACos(Float f)
     {
-        T sum = 1;
-        T term = 1;
-        T xSquare = value * value;
-        int n = 1;
-
-        while (true)
-        {
-            term *= xSquare / ((2 * n - 1) * (2 * n));
-            if (term < 0.00001)
-                break;
-            if (n % 2 == 0)
-                sum += term;
-            else
-                sum -= term;
-            n++;
-        }
-
-        return sum;
+        UGE_ASSERT(Abs(f) <= 1.0f, "Value must be in range [-1, 1]");
+        return ::acos(f);
     }
 
-    template <typename T>
-    UGE_INLINE constexpr T Sin(const T& value)
+    UGE_INLINE Float ASinSafe(Float f)
     {
-        T sum = value;
-        T term = value;
-        T xSquare = value * value;
-        int n = 1;
-
-        while (true)
+        if (Abs(f) >= 1.f)
         {
-            term *= -xSquare / ((2 * n) * (2 * n + 1));
-            if (math::Abs(term) < 0.00001) break;
-            sum += term;
-            n++;
+		    f = ( f>0 )	? 0.5f * M_PI : -0.5f * M_PI;
+		    return f;
         }
 
-        return sum;
+        return ASin(f);
     }
 
-    template <typename T>
-    UGE_INLINE constexpr T Sqrt(const T &value)
+    UGE_INLINE Float ACosSafe(Float f)
     {
-        T x = value;
-        T y = 1;
-        T e = 0.000001;
-
-        while (x - y > e)
+        if (Abs(f) >= 1.f)
         {
-            x = (x + y) / 2;
-            y = value / x;
+            f = (f > 0) ? 0 : M_PI;
+            return f;
         }
 
-        return x;
+        return ACos(f);
+    }
+
+    UGE_INLINE Float Atan(Float f)
+    {
+        return ::atan(f);
+    }
+
+    UGE_INLINE Float Atan2(Float y, Float x)
+    {
+        return ::atan2(y, x);
+    }
+
+    UGE_INLINE Float Tan(Float f)
+    {
+        return ::tan(f);
+    }
+    
+    UGE_INLINE Float Ceil(Float f)
+    {
+        return ::ceil(f);
+    }
+
+    UGE_INLINE Float Cos(Float f)
+    {
+        return ::cos(f);
+    }
+
+    UGE_INLINE Float Sin(Float f)
+    {
+        return ::sin(f);
+    }
+
+    UGE_INLINE Float Sqrt(const Float f)
+    {
+        return ::sqrtf(f);
+    }
+
+    UGE_INLINE Float Rsqrt(const Float f)
+    {
+        return 1.0f / ::sqrtf(f);
+    }
+
+    UGE_INLINE Float Floor(Float f)
+    {
+        return ::floor(f);
+    }
+
+    UGE_INLINE Float Round(Float f)
+    {
+        return ::floor(f + 0.5f);
+    }
+
+    #define LT(n) n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n
+
+    UGE_INLINE Int32 Log2(Int32 val)
+    {
+        static const Byte log2Table[256] = 
+        {
+            0, 1, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4,
+            LT(5), LT(6), LT(6), LT(7), LT(7), LT(7), LT(7),
+            LT(8), LT(8), LT(8), LT(8), LT(8), LT(8), LT(8), LT(8)
+        };
+        Int32 l = -1;
+        while (val >= 256)
+        {
+            l += 8;
+            val >>= 8;
+        }
+        return l + log2Table[val];
     }
 
     UGE_INLINE constexpr Float DegToRad(const Float &value)
@@ -188,22 +209,9 @@ namespace uge::math
         return result;
     }
 
-    UGE_INLINE Float Pow(Float base, UInt32 exponent)
+    UGE_INLINE Float Pow(Float base, Float exponent)
     {
-        Float result = 1.0f;
-
-        while (exponent > 0)
-        {
-            if (exponent & 1)
-            {
-                result *= base;
-            }
-
-            exponent >>= 1;
-            base *= base;
-        }
-
-        return result;
+        return ::powf(base, exponent);
     }
 }
 

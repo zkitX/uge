@@ -244,7 +244,7 @@ namespace uge::math
         Float dot = Dot(other);
         dot = Clamp(dot, -1.0f, 1.0f);
 
-        Float theta = Acos(dot) * t;
+        Float theta = ACos(dot) * t;
         Vec2 relative = other - *this * dot;
         relative.Normalize();
 

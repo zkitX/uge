@@ -100,6 +100,42 @@ namespace uge::math
         return *this;
     }
 
+    UGE_FORCE_INLINE Vec4& Vec4::operator+=(const Float f)
+    {
+        x += f;
+        y += f;
+        z += f;
+        w += f;
+        return *this;
+    }
+
+    UGE_FORCE_INLINE Vec4& Vec4::operator-=(const Float f)
+    {
+        x -= f;
+        y -= f;
+        z -= f;
+        w -= f;
+        return *this;
+    }
+
+    UGE_FORCE_INLINE Vec4& Vec4::operator*=(const Float f)
+    {
+        x *= f;
+        y *= f;
+        z *= f;
+        w *= f;
+        return *this;
+    }
+
+    UGE_FORCE_INLINE Vec4& Vec4::operator/=(const Float f)
+    {
+        x /= f;
+        y /= f;
+        z /= f;
+        w /= f;
+        return *this;
+    }
+
     UGE_FORCE_INLINE Bool Vec4::operator==(const Vec4 &v) const
     {
         return Equal(*this, v, EqualMask4D);
@@ -188,6 +224,11 @@ namespace uge::math
 		return _mm_andnot_ps( hasLength, _mm_mul_ps( v, unitLength) );
     }
 
+    UGE_INLINE Vec4 Vec4::Normalize() const
+    {
+        return Vec4(Normalize(vec));
+    }
+
     UGE_INLINE Float Vec4::Normalize(const DotProductTypeMask maskType)
     {
         Float len = Magnitude(maskType);
@@ -228,6 +269,59 @@ namespace uge::math
                 return Vec4(Normalize(vec));
             }
         }
+    }
+
+    UGE_FORCE_INLINE void Vec4::Set(const Float x, const Float y, const Float z, const Float w)
+    {
+        this->x = x;
+        this->y = y;
+        this->z = z;
+        this->w = w;
+    }
+
+    UGE_FORCE_INLINE void Vec4::Set(const Vec4& v)
+    {
+        Set(v.x, v.y, v.z, v.w);
+    }
+
+    UGE_FORCE_INLINE void Vec4::Set3(const Float x, const Float y, const Float z)
+    {
+        this->x = x;
+        this->y = y;
+        this->z = z;
+    }
+
+    UGE_FORCE_INLINE void Vec4::Set3(const Vec4& v)
+    {
+        Set3(v.x, v.y, v.z);
+    }
+
+    UGE_FORCE_INLINE Vec4& Vec4::SetZero()
+    {
+        vec = _mm_setzero_ps();
+        return *this;
+    }
+
+    UGE_FORCE_INLINE Vec4& Vec4::SetOne()
+    {
+        vec = _mm_set1_ps(1.f);
+        return *this;
+    }
+
+    UGE_FORCE_INLINE Vec4& Vec4::Negate()
+    {
+        vec = _mm_sub_ps(_mm_setzero_ps(), vec);
+        return *this;
+    }
+
+    UGE_INLINE Bool Vec4::IsValid() const
+    {
+        return std::isfinite(x) && std::isfinite(y) && std::isfinite(z) && std::isfinite(w);
+    }
+
+    UGE_INLINE Bool Vec4::IsZero() const
+    {
+        return x == 0.f && y == 0.f && z == 0.f && w == 0.f;
     }
 
     UGE_INLINE Float Vec4::DistanceTo(const Vec4 &v) const
@@ -325,7 +419,6 @@ namespace uge::math
 
     UGE_INLINE Vec4 Vec4::Cross(const Vec4 &a, const Vec4 &b, const Float w)
     {
-        // { 1.0f, 2.0f, 3.0f, 4.0f } = { 3.0f, 1.0f, 2.0f, 4.0f }
         __m128 temp1 = _mm_shuffle_ps( a, a, _MM_SHUFFLE( 3, 0, 2, 1 ) );
 		__m128 temp2 = _mm_shuffle_ps( b, b, _MM_SHUFFLE( 3, 1, 0, 2 ) );
 		__m128 vResult = _mm_mul_ps( temp1, temp2 );
@@ -334,6 +427,21 @@ namespace uge::math
 		Vec4 result = _mm_sub_ps( vResult, _mm_mul_ps( temp1, temp2 ) );
 		result.w = w;
 		return result;
+    }
+
+    UGE_FORCE_INLINE Vec4 Vec4::Zeros()
+    {
+        return { _mm_setzero_ps() };
+    }
+
+    UGE_FORCE_INLINE Vec4 Vec4::Ones()
+    {
+        return { _mm_set1_ps(1.f) };
+    }
+
+    UGE_FORCE_INLINE Vec4 Vec4::ZeroW()
+    {
+        return { _mm_set_ps(0.f, 0.f, 0.f, 1.f) };
     }
 }
 #endif // __COREMATH_MATH_VECTOR4_INL__

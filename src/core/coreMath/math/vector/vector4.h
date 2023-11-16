@@ -56,6 +56,11 @@ namespace uge::math
         Vec4 &operator*=(const Vec4 &v);
         Vec4 &operator/=(const Vec4 &v);
 
+        Vec4& operator+=(const Float f);
+        Vec4& operator-=(const Float f);
+        Vec4& operator*=(const Float f);
+        Vec4& operator/=(const Float f);
+
         Bool operator==(const Vec4 &v) const;
         Bool operator!=(const Vec4 &v) const;
         Bool operator<(const Vec4 &v) const;
@@ -67,14 +72,26 @@ namespace uge::math
 
         static Bool Equal(const Vec4 a, const Vec4 b, const EqualMask maskType);
         static Float Dot(const Vec4 &a, const Vec4 &b, const DotProductTypeMask maskType);
+        static Vec4 Cross(const Vec4 &a, const Vec4 &b, const Float w = 1.f);
         Float Dot(const Vec4 &b, const DotProductTypeMask maskType) const;
 
         Float Magnitude(const DotProductTypeMask maskType) const;
         Float MagnitudeSquared(const DotProductTypeMask maskType) const;
 
         __m128 Normalize(__m128 v) const;
+        Vec4 Normalize() const;
         Float Normalize(const DotProductTypeMask maskType);
         Vec4 Normalized(const DotProductTypeMask maskType);
+
+        void Set(const Float x, const Float y, const Float z, const Float w);
+        void Set(const Vec4& v);
+        void Set3(const Float x, const Float y, const Float z);
+        void Set3(const Vec4& v);
+        Vec4& SetZero();
+        Vec4& SetOne();
+        Vec4& Negate();
+        Bool IsValid() const;
+        Bool IsZero() const;
 
         // distance calculations
         Float DistanceTo(const Vec4 &v) const;
@@ -86,7 +103,9 @@ namespace uge::math
         Float DistanceToEdgeSquared(const Vec4 &v0, const Vec4 &v1) const;
         Vec4 NearestPointOnEdge(const Vec4 &v0, const Vec4 &v1) const;
 
-        static Vec4 Cross(const Vec4 &a, const Vec4 &b, const Float w);
+        static Vec4 Zeros();
+        static Vec4 Ones();
+        static Vec4 ZeroW();
     };
 } // namespace uge::math
 
