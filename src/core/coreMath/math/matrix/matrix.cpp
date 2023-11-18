@@ -5,7 +5,7 @@
 namespace uge::math
 {
 
-// https://lxjk.github.io/2017/09/03/Fast-4x4-Matrix-Inverse-with-SSE-SIMD-Explained.html
+    // https://lxjk.github.io/2017/09/03/Fast-4x4-Matrix-Inverse-with-SSE-SIMD-Explained.html
 
 #define MakeShuffleMask(x, y, z, w) (x | (y << 2) | (z << 4) | (w << 6))
 #define VecSwizzleMask(vec, mask) _mm_shuffle_ps(vec, vec, mask)
@@ -64,7 +64,7 @@ namespace uge::math
     Matrix Matrix::InversedFull() const
     {
         // use block matrix method
-	    // A is a matrix, then i(A) or iA means inverse of A, A# (or A_ in code) means adjugate of A, |A| (or detA in code) is determinant, tr(A) is trace
+        // A is a matrix, then i(A) or iA means inverse of A, A# (or A_ in code) means adjugate of A, |A| (or detA in code) is determinant, tr(A) is trace
 
         // sub matrices
         Vector A = VecShuffle_0101(X, Y);
@@ -75,8 +75,7 @@ namespace uge::math
         // determinant as (|A| |B| |C| |D|)
         Vector detSub = _mm_sub_ps(
             _mm_mul_ps(VecShuffle(X, Z, 0, 2, 0, 2), VecShuffle(Y, W, 1, 3, 1, 3)),
-            _mm_mul_ps(VecShuffle(X, Z, 1, 3, 1, 3), VecShuffle(Y, W, 0, 2, 0, 2))
-        );
+            _mm_mul_ps(VecShuffle(X, Z, 1, 3, 1, 3), VecShuffle(Y, W, 0, 2, 0, 2)));
         Vector detA = VecSwizzle1(detSub, 0);
         Vector detB = VecSwizzle1(detSub, 1);
         Vector detC = VecSwizzle1(detSub, 2);
@@ -95,40 +94,40 @@ namespace uge::math
         Vector W_ = _mm_sub_ps(_mm_mul_ps(detA, D), Mat2Mul(C, A_B));
 
         // |M| = |A|*|D| + ... (continue later)
-		__m128 detM = _mm_mul_ps( detA, detD );
+        __m128 detM = _mm_mul_ps(detA, detD);
 
-		// Y# = |B|C - D(A#B)#
-		__m128 Y_ = _mm_sub_ps( _mm_mul_ps( detB, C ), Mat2MulAdj( D, A_B ) );
-		// Z# = |C|B - A(D#C)#
-		__m128 Z_ = _mm_sub_ps( _mm_mul_ps( detC, B ), Mat2MulAdj( A, D_C ) );
+        // Y# = |B|C - D(A#B)#
+        __m128 Y_ = _mm_sub_ps(_mm_mul_ps(detB, C), Mat2MulAdj(D, A_B));
+        // Z# = |C|B - A(D#C)#
+        __m128 Z_ = _mm_sub_ps(_mm_mul_ps(detC, B), Mat2MulAdj(A, D_C));
 
-		// |M| = |A|*|D| + |B|*|C| ... (continue later)
-		detM = _mm_add_ps( detM, _mm_mul_ps( detB, detC ) );
+        // |M| = |A|*|D| + |B|*|C| ... (continue later)
+        detM = _mm_add_ps(detM, _mm_mul_ps(detB, detC));
 
         // tr((A#B)(D#C))
-		__m128 tr = _mm_mul_ps( A_B, VecSwizzle( D_C, 0, 2, 1, 3 ) );
-		tr = _mm_hadd_ps( tr, tr );
-		tr = _mm_hadd_ps( tr, tr );
-		// |M| = |A|*|D| + |B|*|C| - tr((A#B)(D#C)
-		detM = _mm_sub_ps( detM, tr );
+        __m128 tr = _mm_mul_ps(A_B, VecSwizzle(D_C, 0, 2, 1, 3));
+        tr = _mm_hadd_ps(tr, tr);
+        tr = _mm_hadd_ps(tr, tr);
+        // |M| = |A|*|D| + |B|*|C| - tr((A#B)(D#C)
+        detM = _mm_sub_ps(detM, tr);
 
-        const __m128 adjSignMask = _mm_setr_ps( 1.0f, -1.0f, -1.0f, 1.0f );
-		// (1/|M|, -1/|M|, -1/|M|, 1/|M|)
-		__m128 rDetM = _mm_div_ps( adjSignMask, detM );
+        const __m128 adjSignMask = _mm_setr_ps(1.0f, -1.0f, -1.0f, 1.0f);
+        // (1/|M|, -1/|M|, -1/|M|, 1/|M|)
+        __m128 rDetM = _mm_div_ps(adjSignMask, detM);
 
-		X_ = _mm_mul_ps( X_, rDetM );
-		Y_ = _mm_mul_ps( Y_, rDetM );
-		Z_ = _mm_mul_ps( Z_, rDetM );
-		W_ = _mm_mul_ps( W_, rDetM );
+        X_ = _mm_mul_ps(X_, rDetM);
+        Y_ = _mm_mul_ps(Y_, rDetM);
+        Z_ = _mm_mul_ps(Z_, rDetM);
+        W_ = _mm_mul_ps(W_, rDetM);
 
         // apply adjugate and store, here we combine adjugate shuffle and store shuffle
-		Matrix r;
-		r.X = VecShuffle( X_, Y_, 3, 1, 3, 1 );
-		r.Y = VecShuffle( X_, Y_, 2, 0, 2, 0 );
-		r.Z = VecShuffle( Z_, W_, 3, 1, 3, 1 );
-		r.W = VecShuffle( Z_, W_, 2, 0, 2, 0 );
+        Matrix r;
+        r.X = VecShuffle(X_, Y_, 3, 1, 3, 1);
+        r.Y = VecShuffle(X_, Y_, 2, 0, 2, 0);
+        r.Z = VecShuffle(Z_, W_, 3, 1, 3, 1);
+        r.W = VecShuffle(Z_, W_, 2, 0, 2, 0);
 
-		return r;
+        return r;
     }
 
     Matrix Matrix::Transposed() const
@@ -143,14 +142,13 @@ namespace uge::math
         return Matrix(r0, r1, r2, r3);
     }
 
-    Matrix Matrix::Mul(const Matrix& a, const Matrix& b)
+    Matrix Matrix::Mul(const Matrix &a, const Matrix &b)
     {
         return Matrix(
             b.Transform4x4(a.X),
             b.Transform4x4(a.Y),
             b.Transform4x4(a.Z),
-            b.Transform4x4(a.W)
-        );
+            b.Transform4x4(a.W));
     }
 
 }

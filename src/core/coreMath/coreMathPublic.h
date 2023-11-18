@@ -5,12 +5,22 @@
 
 #include "math/mathUtils.h"
 #include "math/simdUtils.h"
+
 #include "math/vector/vector2.h"
 #include "math/vector/vector3.h"
 #include "math/vector/vector4.h"
-
 #include "math/quaternion/quaternion.h"
 #include "math/matrix/matrix.h"
 #include "math/eulerAngles/eulerAngles.h"
+#include "math/plane/plane.h"
+
+#include "math/vector/vector2.inl"
+#include "math/vector/vector3.inl"
+#include "math/vector/vector4.inl"
+#include "math/quaternion/quaternion.inl"
+#include "math/matrix/matrix.inl"
+#include "math/eulerAngles/eulerAngles.inl"
+#include "math/plane/plane.inl"
+
 
 #endif  // __COREMATH_PUBLIC_H__

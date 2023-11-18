@@ -1,0 +1,6 @@
+#ifndef __COREMATH_MATH_PLANE_H__
+#define __COREMATH_MATH_PLANE_H__
+
+
+
+#endif // __COREMATH_MATH_PLANE_H__

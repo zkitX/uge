@@ -89,10 +89,10 @@ namespace uge::math
 
             /* operations: 6 shuffles, 4 multiplications, 3 compound additions/subtractions   */
         }
-        
+
         UGE_INLINE Vector QuatLerpFast(Vector q1, Vector q2, Float t)
         {
-            return Normalize(_mm_add_ps( _mm_mul_ps( q1, _mm_set_ps1( 1 - t ) ), _mm_mul_ps( q2, _mm_set_ps1( t ) ) ));
+            return Normalize(_mm_add_ps(_mm_mul_ps(q1, _mm_set_ps1(1 - t)), _mm_mul_ps(q2, _mm_set_ps1(t))));
         }
 
         UGE_INLINE Vector QuatLerp(Vector q1, Vector q2, Float t)
@@ -105,27 +105,27 @@ namespace uge::math
 
         UGE_INLINE Vector QuatSlerpFast(Vector q1, Vector q2, Float t, Vector cosTheta, Float tolerance)
         {
-            const Float scalarCosTheta = Vec4( cosTheta ).x;
+            const Float scalarCosTheta = Vec4(cosTheta).x;
             if (scalarCosTheta > tolerance)
             {
                 return QuatLerpFast(q1, q2, t);
             }
             else
             {
-                const Float theta = ACos( scalarCosTheta );
-                const Float sinTheta = Sin( theta );
-                const Float t1 = Sin( ( 1.f - t ) * theta ); 
-                const Float t2 = Sin( t * theta );
-                return _mm_div_ps( _mm_add_ps( _mm_mul_ps( q1, _mm_set_ps1( t1 ) ), _mm_mul_ps( q2, _mm_set_ps1( t2 ) ) ), _mm_set_ps1( sinTheta ));
+                const Float theta = ACos(scalarCosTheta);
+                const Float sinTheta = Sin(theta);
+                const Float t1 = Sin((1.f - t) * theta);
+                const Float t2 = Sin(t * theta);
+                return _mm_div_ps(_mm_add_ps(_mm_mul_ps(q1, _mm_set_ps1(t1)), _mm_mul_ps(q2, _mm_set_ps1(t2))), _mm_set_ps1(sinTheta));
             }
         }
 
         UGE_INLINE Vector QuatSlerp(Vector q1, Vector q2, Float t, Float tolerance)
         {
-            Vector cosTheta = Dot( q1, q2 );
-            const Vector mask = _mm_and_ps( cosTheta, _mm_set_ps1( -0.f ) );
-            q2 = _mm_xor_ps( q2, mask );
-            cosTheta = _mm_xor_ps( cosTheta, mask );
+            Vector cosTheta = Dot(q1, q2);
+            const Vector mask = _mm_and_ps(cosTheta, _mm_set_ps1(-0.f));
+            q2 = _mm_xor_ps(q2, mask);
+            cosTheta = _mm_xor_ps(cosTheta, mask);
             return QuatSlerpFast(q1, q2, t, cosTheta, tolerance);
         }
 
@@ -146,7 +146,7 @@ namespace uge::math
             static const Vector mask = _mm_set_ps(0.f, -0.f, -0.f, -0.f);
             return _mm_xor_ps(v, mask);
         }
-        
+
     }
 }
 

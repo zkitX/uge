@@ -8,7 +8,10 @@ namespace uge::math
     {
         union
         {
-            struct { Float x, y, z; };
+            struct
+            {
+                Float x, y, z;
+            };
             Float v[3];
         };
 
@@ -16,10 +19,10 @@ namespace uge::math
         Vec3(Float x, Float y, Float z);
         Vec3(const Vec3 &other);
 
-        Vec3( const Vec2& v);
-        Vec3(const Vec4& v);
+        Vec3(const Vec2 &v);
+        Vec3(const Vec4 &v);
         Vec3(const Float f[3]);
-        Vec3( std::nullptr_t ) = delete;
+        Vec3(std::nullptr_t) = delete;
 
         Vec3 &operator=(const Vec3 &other);
 
@@ -65,8 +68,8 @@ namespace uge::math
         Vec3 Lerp(const Vec3 &other, Float t) const;
         Vec3 Slerp(const Vec3 &other, Float t) const;
 
-        Vec3 Min(const Vec3& a, const Vec3& b);
-        Vec3 Max(const Vec3& a, const Vec3& b);
+        Vec3 Min(const Vec3 &a, const Vec3 &b);
+        Vec3 Max(const Vec3 &a, const Vec3 &b);
 
         static const Vec3 Zero;
         static const Vec3 One;
@@ -76,6 +79,4 @@ namespace uge::math
     };
 }
 
-#include "vector3.inl"
-
-#endif  // __COREMATH_MATH_VECTOR3_H__
+#endif // __COREMATH_MATH_VECTOR3_H__

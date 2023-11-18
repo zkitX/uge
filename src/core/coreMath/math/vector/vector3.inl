@@ -1,14 +1,8 @@
-#include "vector3.h"
 #ifndef __COREMATH_MATH_VECTOR3_INL__
 #define __COREMATH_MATH_VECTOR3_INL__
 
 namespace uge::math
 {
-    UGE_FORCE_INLINE Vec3::Vec3()
-        : x(0.0f), y(0.0f), z(0.0f)
-    {
-    }
-
     UGE_FORCE_INLINE Vec3::Vec3(Float x, Float y, Float z)
         : x(x), y(y), z(z)
     {
@@ -24,7 +18,7 @@ namespace uge::math
     {
     }
 
-    UGE_FORCE_INLINE Vec3::Vec3(const Vec4& v)
+    UGE_FORCE_INLINE Vec3::Vec3(const Vec4 &v)
         : x(v.x), y(v.y), z(v.z)
     {
     }

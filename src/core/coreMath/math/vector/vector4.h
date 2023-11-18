@@ -3,14 +3,14 @@
 
 namespace uge::math
 {
-    enum DotProductTypeMask
+    enum DotProductTypeMask : Int32
     {
         DotProduct2D = 0x3F,
         DotProduct3D = 0x7F,
         DotProduct4D = 0xFF
     };
 
-    enum EqualMask
+    enum EqualMask : Int32
     {
         EqualMask2D = 0x03,
         EqualMask3D = 0x07,
@@ -56,19 +56,19 @@ namespace uge::math
         Vec4 &operator*=(const Vec4 &v);
         Vec4 &operator/=(const Vec4 &v);
 
-        Vec4& operator+=(const Float f);
-        Vec4& operator-=(const Float f);
-        Vec4& operator*=(const Float f);
-        Vec4& operator/=(const Float f);
+        Vec4 &operator+=(const Float f);
+        Vec4 &operator-=(const Float f);
+        Vec4 &operator*=(const Float f);
+        Vec4 &operator/=(const Float f);
 
         Bool operator==(const Vec4 &v) const;
         Bool operator!=(const Vec4 &v) const;
         Bool operator<(const Vec4 &v) const;
 
-        const Vec2& ToVec2() const;
-        Vec2& ToVec2();
-        const Vec3& ToVec3() const;
-        Vec3& ToVec3();
+        const Vec2 &ToVec2() const;
+        Vec2 &ToVec2();
+        const Vec3 &ToVec3() const;
+        Vec3 &ToVec3();
 
         static Bool Equal(const Vec4 a, const Vec4 b, const EqualMask maskType);
         static Float Dot(const Vec4 &a, const Vec4 &b, const DotProductTypeMask maskType);
@@ -84,12 +84,12 @@ namespace uge::math
         Vec4 Normalized(const DotProductTypeMask maskType);
 
         void Set(const Float x, const Float y, const Float z, const Float w);
-        void Set(const Vec4& v);
+        void Set(const Vec4 &v);
         void Set3(const Float x, const Float y, const Float z);
-        void Set3(const Vec4& v);
-        Vec4& SetZero();
-        Vec4& SetOne();
-        Vec4& Negate();
+        void Set3(const Vec4 &v);
+        Vec4 &SetZero();
+        Vec4 &SetOne();
+        Vec4 &Negate();
         Bool IsValid() const;
         Bool IsZero() const;
 
@@ -108,7 +108,5 @@ namespace uge::math
         static Vec4 ZeroW();
     };
 } // namespace uge::math
-
-#include "vector4.inl"
 
 #endif // __COREMATH_MATH_VECTOR4_H__

@@ -1,6 +1,8 @@
-#include "vector4.h"
 #ifndef __COREMATH_MATH_VECTOR4_INL__
 #define __COREMATH_MATH_VECTOR4_INL__
+
+#include "vector2.h"
+#include "vector3.h"
 
 namespace uge::math
 {
@@ -100,7 +102,7 @@ namespace uge::math
         return *this;
     }
 
-    UGE_FORCE_INLINE Vec4& Vec4::operator+=(const Float f)
+    UGE_FORCE_INLINE Vec4 &Vec4::operator+=(const Float f)
     {
         x += f;
         y += f;
@@ -109,7 +111,7 @@ namespace uge::math
         return *this;
     }
 
-    UGE_FORCE_INLINE Vec4& Vec4::operator-=(const Float f)
+    UGE_FORCE_INLINE Vec4 &Vec4::operator-=(const Float f)
     {
         x -= f;
         y -= f;
@@ -118,7 +120,7 @@ namespace uge::math
         return *this;
     }
 
-    UGE_FORCE_INLINE Vec4& Vec4::operator*=(const Float f)
+    UGE_FORCE_INLINE Vec4 &Vec4::operator*=(const Float f)
     {
         x *= f;
         y *= f;
@@ -127,7 +129,7 @@ namespace uge::math
         return *this;
     }
 
-    UGE_FORCE_INLINE Vec4& Vec4::operator/=(const Float f)
+    UGE_FORCE_INLINE Vec4 &Vec4::operator/=(const Float f)
     {
         x /= f;
         y /= f;
@@ -165,22 +167,22 @@ namespace uge::math
 
     UGE_FORCE_INLINE const Vec2 &Vec4::ToVec2() const
     {
-        return reinterpret_cast<const Vec2&>(*this);
+        return reinterpret_cast<const Vec2 &>(*this);
     }
 
     UGE_FORCE_INLINE Vec2 &Vec4::ToVec2()
     {
-        return reinterpret_cast<Vec2&>(*this);
+        return reinterpret_cast<Vec2 &>(*this);
     }
 
     UGE_FORCE_INLINE const Vec3 &Vec4::ToVec3() const
     {
-        return reinterpret_cast<const Vec3&>(*this);
+        return reinterpret_cast<const Vec3 &>(*this);
     }
 
     UGE_FORCE_INLINE Vec3 &Vec4::ToVec3()
     {
-        return reinterpret_cast<Vec3&>(*this);
+        return reinterpret_cast<Vec3 &>(*this);
     }
 
     UGE_FORCE_INLINE Bool Vec4::Equal(const Vec4 a, const Vec4 b, const EqualMask maskType)
@@ -188,14 +190,36 @@ namespace uge::math
         return _mm_movemask_ps(_mm_cmpeq_ps(a.vec, b.vec)) == maskType;
     }
 
-    inline Float Vec4::Dot(const Vec4 &a, const Vec4 &b, const DotProductTypeMask maskType)
+    UGE_FORCE_INLINE Float Vec4::Dot(const Vec4 &a, const Vec4 &b, const DotProductTypeMask maskType)
     {
-        return _mm_cvtss_f32(_mm_dp_ps(a.vec, b.vec, maskType));
+        switch (maskType)
+        {
+            case DotProduct2D:
+                return _mm_cvtss_f32(_mm_dp_ps(a.vec, b.vec, 0x3F));
+            case DotProduct3D:
+                return _mm_cvtss_f32(_mm_dp_ps(a.vec, b.vec, 0x7F));
+            case DotProduct4D:
+                return _mm_cvtss_f32(_mm_dp_ps(a.vec, b.vec, 0xFF));
+            default:
+                UGE_ASSERT(false, "Invalid mask type");
+                return 0.f;
+        }
     }
 
-    inline Float Vec4::Dot(const Vec4 &b, const DotProductTypeMask maskType) const
+    UGE_FORCE_INLINE Float Vec4::Dot(const Vec4 &b, const DotProductTypeMask maskType) const
     {
-        return _mm_cvtss_f32(_mm_dp_ps(vec, b.vec, maskType));
+        switch (maskType)
+        {
+            case DotProduct2D:
+                return _mm_cvtss_f32(_mm_dp_ps(vec, b.vec, 0x3F));
+            case DotProduct3D:
+                return _mm_cvtss_f32(_mm_dp_ps(vec, b.vec, 0x7F));
+            case DotProduct4D:
+                return _mm_cvtss_f32(_mm_dp_ps(vec, b.vec, 0xFF));
+            default:
+                UGE_ASSERT(false, "Invalid mask type");
+                return 0.f;
+        }
     }
 
     UGE_FORCE_INLINE Float Vec4::Magnitude(const DotProductTypeMask maskType) const
@@ -203,12 +227,23 @@ namespace uge::math
         return SqrtSSE(MagnitudeSquared(maskType));
     }
 
-    UGE_FORCE_INLINE Float Vec4::MagnitudeSquared(const DotProductTypeMask maskType) const
+    UGE_FORCE_INLINE Float Vec4::MagnitudeSquared(DotProductTypeMask maskType) const
     {
-        return _mm_cvtss_f32(_mm_dp_ps(vec, vec, maskType));
+        switch (maskType)
+        {
+            case DotProduct2D:
+                return _mm_cvtss_f32(_mm_dp_ps(vec, vec, 0x3F));
+            case DotProduct3D:
+                return _mm_cvtss_f32(_mm_dp_ps(vec, vec, 0x7F));
+            case DotProduct4D:
+                return _mm_cvtss_f32(_mm_dp_ps(vec, vec, 0xFF));
+            default:
+                UGE_ASSERT(false, "Invalid mask type");
+                return 0.f;
+        }
     }
 
-    UGE_INLINE __m128 Vec4::Normalize(__m128 v) const
+    UGE_INLINE Vector Vec4::Normalize(__m128 v) const
     {
         __m128 vA = _mm_mul_ps(v, v);
         vA = _mm_add_ss(
@@ -219,9 +254,9 @@ namespace uge::math
         __m128 length = _mm_sqrt_ss(vA);
         length = _mm_shuffle_ps(length, length, _MM_SHUFFLE(0, 0, 0, 0));
         __m128 hasLength = _mm_cmpeq_ss(length, _mm_setzero_ps());
-        hasLength = _mm_shuffle_ps( hasLength, hasLength, _MM_SHUFFLE( 0, 0, 0, 0 ) );
-		__m128 unitLength = _mm_div_ps( _mm_set1_ps( 1.0f ), length );
-		return _mm_andnot_ps( hasLength, _mm_mul_ps( v, unitLength) );
+        hasLength = _mm_shuffle_ps(hasLength, hasLength, _MM_SHUFFLE(0, 0, 0, 0));
+        __m128 unitLength = _mm_div_ps(_mm_set1_ps(1.0f), length);
+        return _mm_andnot_ps(hasLength, _mm_mul_ps(v, unitLength));
     }
 
     UGE_INLINE Vec4 Vec4::Normalize() const
@@ -279,7 +314,7 @@ namespace uge::math
         this->w = w;
     }
 
-    UGE_FORCE_INLINE void Vec4::Set(const Vec4& v)
+    UGE_FORCE_INLINE void Vec4::Set(const Vec4 &v)
     {
         Set(v.x, v.y, v.z, v.w);
     }
@@ -291,24 +326,24 @@ namespace uge::math
         this->z = z;
     }
 
-    UGE_FORCE_INLINE void Vec4::Set3(const Vec4& v)
+    UGE_FORCE_INLINE void Vec4::Set3(const Vec4 &v)
     {
         Set3(v.x, v.y, v.z);
     }
 
-    UGE_FORCE_INLINE Vec4& Vec4::SetZero()
+    UGE_FORCE_INLINE Vec4 &Vec4::SetZero()
     {
         vec = _mm_setzero_ps();
         return *this;
     }
 
-    UGE_FORCE_INLINE Vec4& Vec4::SetOne()
+    UGE_FORCE_INLINE Vec4 &Vec4::SetOne()
     {
         vec = _mm_set1_ps(1.f);
         return *this;
     }
 
-    UGE_FORCE_INLINE Vec4& Vec4::Negate()
+    UGE_FORCE_INLINE Vec4 &Vec4::Negate()
     {
         vec = _mm_sub_ps(_mm_setzero_ps(), vec);
         return *this;
@@ -356,7 +391,7 @@ namespace uge::math
         const Float p = Dot(edge, *this, DotProduct3D);
         if (p >= ta && p <= tb)
         {
-            return DistanceTo(v0 + edge * (p-ta));
+            return DistanceTo(v0 + edge * (p - ta));
         }
         else if (p < ta)
         {
@@ -368,10 +403,10 @@ namespace uge::math
         }
     }
 
-    UGE_INLINE Float Vec4::DistanceToEdge2D(const Vec4& a, const Vec4& b) const
+    UGE_INLINE Float Vec4::DistanceToEdge2D(const Vec4 &a, const Vec4 &b) const
     {
         Vec4 edgeXY = b - a;
-        
+
         if (edgeXY.ToVec2().MagnitudeSquared() < 0.0001f)
         {
             return DistanceTo2D(a);
@@ -413,35 +448,35 @@ namespace uge::math
         }
         else
         {
-            return {v1 * proj + v0 * ( 1 - proj )};
+            return {v1 * proj + v0 * (1 - proj)};
         }
     }
 
     UGE_INLINE Vec4 Vec4::Cross(const Vec4 &a, const Vec4 &b, const Float w)
     {
-        __m128 temp1 = _mm_shuffle_ps( a, a, _MM_SHUFFLE( 3, 0, 2, 1 ) );
-		__m128 temp2 = _mm_shuffle_ps( b, b, _MM_SHUFFLE( 3, 1, 0, 2 ) );
-		__m128 vResult = _mm_mul_ps( temp1, temp2 );
-		temp1 = _mm_shuffle_ps( temp1, temp1, _MM_SHUFFLE( 3, 0, 2, 1 ) );
-		temp2 = _mm_shuffle_ps( temp2, temp2, _MM_SHUFFLE( 3, 1, 0, 2 ) );
-		Vec4 result = _mm_sub_ps( vResult, _mm_mul_ps( temp1, temp2 ) );
-		result.w = w;
-		return result;
+        __m128 temp1 = _mm_shuffle_ps(a, a, _MM_SHUFFLE(3, 0, 2, 1));
+        __m128 temp2 = _mm_shuffle_ps(b, b, _MM_SHUFFLE(3, 1, 0, 2));
+        __m128 vResult = _mm_mul_ps(temp1, temp2);
+        temp1 = _mm_shuffle_ps(temp1, temp1, _MM_SHUFFLE(3, 0, 2, 1));
+        temp2 = _mm_shuffle_ps(temp2, temp2, _MM_SHUFFLE(3, 1, 0, 2));
+        Vec4 result = _mm_sub_ps(vResult, _mm_mul_ps(temp1, temp2));
+        result.w = w;
+        return result;
     }
 
     UGE_FORCE_INLINE Vec4 Vec4::Zeros()
     {
-        return { _mm_setzero_ps() };
+        return {_mm_setzero_ps()};
     }
 
     UGE_FORCE_INLINE Vec4 Vec4::Ones()
     {
-        return { _mm_set1_ps(1.f) };
+        return {_mm_set1_ps(1.f)};
     }
 
     UGE_FORCE_INLINE Vec4 Vec4::ZeroW()
     {
-        return { _mm_set_ps(0.f, 0.f, 0.f, 1.f) };
+        return {_mm_set_ps(0.f, 0.f, 0.f, 1.f)};
     }
 }
 #endif // __COREMATH_MATH_VECTOR4_INL__

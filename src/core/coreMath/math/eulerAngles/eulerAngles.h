@@ -63,7 +63,7 @@ namespace uge::math
 
         Matrix ToMatrix() const;
         void ToMatrix(Matrix &m) const;
-        void ToAngleVectors(Vec4* forward, Vec4* right, Vec4* up) const;
+        void ToAngleVectors(Vec4 *forward, Vec4 *right, Vec4 *up) const;
         Quaternion ToQuaternion() const;
         void ToQuaternion(Quaternion &q) const;
         Vec4 TransformPoint(const Vec4 &v) const;
@@ -73,6 +73,4 @@ namespace uge::math
     };
 }
 
-#include "eulerAngles.inl"
-
-#endif  // __COREMATH_MATH_EULERANGLES_H__
+#endif // __COREMATH_MATH_EULERANGLES_H__

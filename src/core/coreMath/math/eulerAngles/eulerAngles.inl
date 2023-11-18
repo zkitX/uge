@@ -4,30 +4,22 @@
 namespace uge::math
 {
     UGE_INLINE EulerAngles::EulerAngles(const Vec3 &v)
-        : Roll(v.x)
-        , Pitch(v.y)
-        , Yaw(v.z)
+        : Roll(v.x), Pitch(v.y), Yaw(v.z)
     {
     }
 
     UGE_INLINE EulerAngles::EulerAngles(const Float f[3])
-        : Roll(f[0])
-        , Pitch(f[1])
-        , Yaw(f[2])
+        : Roll(f[0]), Pitch(f[1]), Yaw(f[2])
     {
     }
 
     UGE_INLINE EulerAngles::EulerAngles(const Float Roll, const Float Pitch, const Float Yaw)
-        : Roll(Roll)
-        , Pitch(Pitch)
-        , Yaw(Yaw)
+        : Roll(Roll), Pitch(Pitch), Yaw(Yaw)
     {
     }
 
     UGE_INLINE EulerAngles::EulerAngles(const EulerAngles &other)
-        : Roll(other.Roll)
-        , Pitch(other.Pitch)
-        , Yaw(other.Yaw)
+        : Roll(other.Roll), Pitch(other.Pitch), Yaw(other.Yaw)
     {
     }
 
@@ -176,9 +168,9 @@ namespace uge::math
     UGE_INLINE Float EulerAngles::NormalizeAngle(Float angle)
     {
         Int32 i = static_cast<Int32>(angle / 360.0f);
-        if ( i != 0 )
+        if (i != 0)
             angle -= i * 360.0f;
-        if ( angle < 0.0f )
+        if (angle < 0.0f)
             angle += 360.0f;
         return angle;
     }
@@ -214,9 +206,9 @@ namespace uge::math
     UGE_INLINE Float EulerAngles::AngleDistance(const Float a, const Float b)
     {
         Float d = NormalizeAngle(b) - NormalizeAngle(a);
-        if ( d > 180.0f )
+        if (d > 180.0f)
             d -= 360.0f;
-        else if ( d < -180.0f )
+        else if (d < -180.0f)
             d += 360.0f;
         return d;
     }
@@ -228,8 +220,8 @@ namespace uge::math
 
     UGE_INLINE Float EulerAngles::Interpolate(const Float a, const Float b, const Float t)
     {
-		const Float diff = AngleDistance( a, b );
-		return a + diff * t;
+        const Float diff = AngleDistance(a, b);
+        return a + diff * t;
     }
 
     UGE_INLINE EulerAngles EulerAngles::Interpolate(const EulerAngles &a, const EulerAngles &b, const Float t)
@@ -241,6 +233,8 @@ namespace uge::math
     {
         *this += AngleDistance(*this, a) * t;
     }
+
+    
 }
 
-#endif  // __COREMATH_MATH_EULERANGLES_INL__
+#endif // __COREMATH_MATH_EULERANGLES_INL__
