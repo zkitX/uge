@@ -140,12 +140,12 @@ namespace uge::math
 
     UGE_FORCE_INLINE Bool Vec4::operator==(const Vec4 &v) const
     {
-        return Equal(*this, v, EqualMask4D);
+        return Vec4::Equal4(*this, v);
     }
 
     UGE_FORCE_INLINE Bool Vec4::operator!=(const Vec4 &v) const
     {
-        return Equal(*this, v, EqualMask4D);
+        return !Vec4::Equal4(*this, v);
     }
 
     UGE_FORCE_INLINE Bool Vec4::operator<(const Vec4 &v) const
@@ -185,125 +185,165 @@ namespace uge::math
         return reinterpret_cast<Vec3 &>(*this);
     }
 
-    UGE_FORCE_INLINE Bool Vec4::Equal(const Vec4 a, const Vec4 b, const EqualMask maskType)
+    UGE_FORCE_INLINE Bool Vec4::Equal2(const Vec4 a, const Vec4 b)
     {
-        return _mm_movemask_ps(_mm_cmpeq_ps(a.vec, b.vec)) == maskType;
+        return ( _mm_movemask_ps( _mm_cmpeq_ps( a, b ) ) & 0x3 ) == 0x3;
     }
 
-    UGE_FORCE_INLINE Float Vec4::Dot(const Vec4 &a, const Vec4 &b, const DotProductTypeMask maskType)
+    UGE_FORCE_INLINE Bool Vec4::Equal3(const Vec4 a, const Vec4 b)
     {
-        switch (maskType)
-        {
-            case DotProduct2D:
-                return _mm_cvtss_f32(_mm_dp_ps(a.vec, b.vec, 0x3F));
-            case DotProduct3D:
-                return _mm_cvtss_f32(_mm_dp_ps(a.vec, b.vec, 0x7F));
-            case DotProduct4D:
-                return _mm_cvtss_f32(_mm_dp_ps(a.vec, b.vec, 0xFF));
-            default:
-                UGE_ASSERT(false, "Invalid mask type");
-                return 0.f;
-        }
+        return ( _mm_movemask_ps( _mm_cmpeq_ps( a, b ) ) & 0x7 ) == 0x7;
     }
 
-    UGE_FORCE_INLINE Float Vec4::Dot(const Vec4 &b, const DotProductTypeMask maskType) const
+    UGE_FORCE_INLINE Bool Vec4::Equal4(const Vec4 a, const Vec4 b)
     {
-        switch (maskType)
-        {
-            case DotProduct2D:
-                return _mm_cvtss_f32(_mm_dp_ps(vec, b.vec, 0x3F));
-            case DotProduct3D:
-                return _mm_cvtss_f32(_mm_dp_ps(vec, b.vec, 0x7F));
-            case DotProduct4D:
-                return _mm_cvtss_f32(_mm_dp_ps(vec, b.vec, 0xFF));
-            default:
-                UGE_ASSERT(false, "Invalid mask type");
-                return 0.f;
-        }
+        return ( _mm_movemask_ps( _mm_cmpeq_ps( a, b ) ) ) == 0xF;
     }
 
-    UGE_FORCE_INLINE Float Vec4::Magnitude(const DotProductTypeMask maskType) const
+    UGE_FORCE_INLINE Bool Vec4::Less2(const Vec4 a, const Vec4 b)
     {
-        return SqrtSSE(MagnitudeSquared(maskType));
+        return ( _mm_movemask_ps( _mm_cmplt_ps( a, b ) ) & 0x3 ) == 0x3;
     }
 
-    UGE_FORCE_INLINE Float Vec4::MagnitudeSquared(DotProductTypeMask maskType) const
+    UGE_FORCE_INLINE Bool Vec4::Less3(const Vec4 a, const Vec4 b)
     {
-        switch (maskType)
-        {
-            case DotProduct2D:
-                return _mm_cvtss_f32(_mm_dp_ps(vec, vec, 0x3F));
-            case DotProduct3D:
-                return _mm_cvtss_f32(_mm_dp_ps(vec, vec, 0x7F));
-            case DotProduct4D:
-                return _mm_cvtss_f32(_mm_dp_ps(vec, vec, 0xFF));
-            default:
-                UGE_ASSERT(false, "Invalid mask type");
-                return 0.f;
-        }
+        return ( _mm_movemask_ps( _mm_cmplt_ps( a, b ) ) & 0x7 ) == 0x7;
     }
 
-    UGE_INLINE Vector Vec4::Normalize(__m128 v) const
+    UGE_FORCE_INLINE Bool Vec4::Less4(const Vec4 a, const Vec4 b)
     {
-        __m128 vA = _mm_mul_ps(v, v);
-        vA = _mm_add_ss(
-            _mm_add_ss(_mm_shuffle_ps(vA, vA, _MM_SHUFFLE(0, 0, 0, 0)),
-                       _mm_shuffle_ps(vA, vA, _MM_SHUFFLE(1, 1, 1, 1))),
-            _mm_add_ss(_mm_shuffle_ps(vA, vA, _MM_SHUFFLE(2, 2, 2, 2)),
-                       _mm_shuffle_ps(vA, vA, _MM_SHUFFLE(3, 3, 3, 3))));
-        __m128 length = _mm_sqrt_ss(vA);
-        length = _mm_shuffle_ps(length, length, _MM_SHUFFLE(0, 0, 0, 0));
-        __m128 hasLength = _mm_cmpeq_ss(length, _mm_setzero_ps());
-        hasLength = _mm_shuffle_ps(hasLength, hasLength, _MM_SHUFFLE(0, 0, 0, 0));
-        __m128 unitLength = _mm_div_ps(_mm_set1_ps(1.0f), length);
-        return _mm_andnot_ps(hasLength, _mm_mul_ps(v, unitLength));
+        return ( _mm_movemask_ps( _mm_cmplt_ps( a, b ) ) ) == 0xF;
     }
 
-    UGE_INLINE Vec4 Vec4::Normalize() const
+    UGE_FORCE_INLINE Bool Vec4::LessEqual2(const Vec4 a, const Vec4 b)
     {
-        return Vec4(Normalize(vec));
+        return ( _mm_movemask_ps( _mm_cmple_ps( a, b ) ) & 0x3 ) == 0x3;
     }
 
-    UGE_INLINE Float Vec4::Normalize(const DotProductTypeMask maskType)
+    UGE_FORCE_INLINE Bool Vec4::LessEqual3(const Vec4 a, const Vec4 b)
     {
-        Float len = Magnitude(maskType);
+        return ( _mm_movemask_ps( _mm_cmple_ps( a, b ) ) & 0x7 ) == 0x7;
+    }
+
+    UGE_FORCE_INLINE Bool Vec4::LessEqual4(const Vec4 a, const Vec4 b)
+    {
+        return ( _mm_movemask_ps( _mm_cmple_ps( a, b ) ) ) == 0xF;
+    }
+
+    UGE_FORCE_INLINE Float Vec4::Dot2(const Vec4 &a, const Vec4 &b)
+    {
+        return _mm_cvtss_f32(_mm_dp_ps(a.vec, b.vec, 0x3F));
+    }
+
+    UGE_FORCE_INLINE Float Vec4::Dot3(const Vec4 &a, const Vec4 &b)
+    {
+        return _mm_cvtss_f32(_mm_dp_ps(a.vec, b.vec, 0x7F));
+    }
+
+    UGE_FORCE_INLINE Float Vec4::Dot4(const Vec4 &a, const Vec4 &b)
+    {
+        return _mm_cvtss_f32(_mm_dp_ps(a.vec, b.vec, 0xFF));
+    }
+
+    UGE_FORCE_INLINE Float Vec4::Dot2(const Vec4 &b) const
+    {
+        return _mm_cvtss_f32(_mm_dp_ps(vec, b.vec, 0x3F));
+    }
+
+    UGE_FORCE_INLINE Float Vec4::Dot3(const Vec4 &b) const
+    {
+        return _mm_cvtss_f32(_mm_dp_ps(vec, b.vec, 0x7F));
+    }
+
+    UGE_FORCE_INLINE Float Vec4::Dot4(const Vec4 &b) const
+    {
+        return _mm_cvtss_f32(_mm_dp_ps(vec, b.vec, 0xFF));
+    }
+
+    UGE_FORCE_INLINE Float Vec4::Mag2() const
+    {
+        return SqrtSSE(SquareMag2());
+    }
+
+    UGE_FORCE_INLINE Float Vec4::Mag3() const
+    {
+        return SqrtSSE(SquareMag3());
+    }
+
+    UGE_FORCE_INLINE Float Vec4::Mag4() const
+    {
+        return SqrtSSE(SquareMag4());
+    }
+
+    UGE_FORCE_INLINE Float Vec4::SquareMag2() const
+    {
+        return _mm_cvtss_f32( _mm_dp_ps( vec, vec, 0x3F ) );
+    }
+
+    UGE_FORCE_INLINE Float Vec4::SquareMag3() const
+    {
+        return _mm_cvtss_f32( _mm_dp_ps( vec, vec, 0x7F ) );
+    }
+
+    UGE_FORCE_INLINE Float Vec4::SquareMag4() const
+    {
+        return _mm_cvtss_f32( _mm_dp_ps( vec, vec, 0xFF ) );
+    }
+
+    UGE_INLINE Float Vec4::Normalize2()
+    {
+        Float len = Mag2();
         if (len != 0)
         {
-            switch (maskType)
-            {
-            case DotProduct2D:
-                *this /= Vec4(len, len, 0.f, 0.f);
-                break;
-            case DotProduct3D:
-                *this /= Vec4(len, len, len, 0.f);
-                break;
-            case DotProduct4D:
-                *this /= Vec4(len, len, len, len);
-                break;
-            }
+            *this /= Vec4(len, len, 0.f, 0.f);
         }
         return len;
     }
 
-    UGE_INLINE Vec4 Vec4::Normalized(const DotProductTypeMask maskType)
+    UGE_INLINE Float Vec4::Normalize3()
     {
-        Float len = Magnitude(maskType);
+        Float len = Mag3();
+        if (len != 0)
+        {
+            *this /= Vec4(len, len, len, 0.f);
+        }
+        return len;
+    }
+
+    UGE_INLINE void Vec4::Normalize4()
+    {
+        vec = VectorHelpers::Normalize(vec);
+    }
+
+    UGE_INLINE Vec4 Vec4::Normalized2() const
+    {
+        Float len = Mag2();
         if (len == 0)
         {
             return *this;
         }
         else
         {
-            switch (maskType)
-            {
-            case DotProduct2D:
-                return *this / Vec4(len, len, 0.f, 0.f);
-            case DotProduct3D:
-                return *this / Vec4(len, len, len, 0.f);
-            case DotProduct4D:
-                return Vec4(Normalize(vec));
-            }
+            return *this / Vec4(len, len, 0.f, 0.f);
         }
+    }
+
+    UGE_INLINE Vec4 Vec4::Normalized3() const
+    {
+        Float len = Mag3();
+        if (len == 0)
+        {
+            return *this;
+        }
+        else
+        {
+            return *this / Vec4(len, len, len, 0.f);
+        }
+    }
+
+    UGE_INLINE Vec4 Vec4::Normalized4() const
+    {
+        return Vec4(VectorHelpers::Normalize(vec));
     }
 
     UGE_FORCE_INLINE void Vec4::Set(const Float x, const Float y, const Float z, const Float w)
@@ -349,6 +389,34 @@ namespace uge::math
         return *this;
     }
 
+    UGE_INLINE Bool Vec4::IsNormalized2(const Float eps) const
+    {
+        const Float len = SquareMag2();
+        return fabsf(len - 1.f) < eps;
+    }
+
+    UGE_INLINE Bool Vec4::IsNormalized3(const Float eps) const
+    {
+        const Float len = SquareMag3();
+        return fabsf(len - 1.f) < eps;
+    }
+
+    UGE_INLINE Bool Vec4::IsNormalized4(const Float eps) const
+    {
+        const Float len = SquareMag4();
+        return fabsf(len - 1.f) < eps;
+    }
+
+    UGE_INLINE Vec4 Vec4::Min4(const Vec4 &a, const Vec4 &b)
+    {
+        return _mm_min_ps(a, b);
+    }
+
+    UGE_INLINE Vec4 Vec4::Max4(const Vec4 &a, const Vec4 &b)
+    {
+        return _mm_max_ps(a, b);
+    }
+
     UGE_INLINE Bool Vec4::IsValid() const
     {
         return std::isfinite(x) && std::isfinite(y) && std::isfinite(z) && std::isfinite(w);
@@ -362,33 +430,33 @@ namespace uge::math
     UGE_INLINE Float Vec4::DistanceTo(const Vec4 &v) const
     {
         Vec4 delta = *this - v;
-        return delta.Magnitude(DotProduct3D);
+        return delta.Mag3();
     }
 
     UGE_INLINE Float Vec4::DistanceSquaredTo(const Vec4 &v) const
     {
         Vec4 delta = *this - v;
-        return delta.MagnitudeSquared(DotProduct3D);
+        return delta.Mag3();
     }
 
     UGE_INLINE Float Vec4::DistanceTo2D(const Vec4 &other) const
     {
         Vec4 delta = *this - other;
-        return delta.Magnitude(DotProduct2D);
+        return delta.Mag2();
     }
 
     UGE_INLINE Float Vec4::DistanceSquaredTo2D(const Vec4 &other) const
     {
-        Vec4 delta = *this - other;
-        return delta.MagnitudeSquared(DotProduct2D);
+        Vec4 delta = ToVec2() - other.ToVec2();
+        return delta.SquareMag2();
     }
 
     UGE_INLINE Float Vec4::DistanceToEdge(const Vec4 &v0, const Vec4 &v1) const
     {
-        const Vec4 edge = (v1 - v0).Normalized(DotProduct3D);
-        const Float ta = Dot(edge, v0, DotProduct3D);
-        const Float tb = Dot(edge, v1, DotProduct3D);
-        const Float p = Dot(edge, *this, DotProduct3D);
+        const Vec4 edge = (v1 - v0).Normalized3();
+        const Float ta = Vec4::Dot3(edge, v0);
+        const Float tb = Vec4::Dot3(edge, v1);
+        const Float p = Vec4::Dot3(edge, *this);
         if (p >= ta && p <= tb)
         {
             return DistanceTo(v0 + edge * (p - ta));
@@ -412,10 +480,10 @@ namespace uge::math
             return DistanceTo2D(a);
         }
 
-        const Vec4 edge = edgeXY.Normalized(DotProduct2D);
-        const Float ta = Dot(edge, a, DotProduct2D);
-        const Float tb = Dot(edge, b, DotProduct2D);
-        const Float p = Dot(edge, *this, DotProduct2D);
+        const Vec4 edge = edgeXY.Normalized2();
+        const Float ta = Vec4::Dot2(edge, a);
+        const Float tb = Vec4::Dot2(edge, b);
+        const Float p = Vec4::Dot2(edge, *this);
         if (p >= ta && p <= tb)
         {
             return DistanceTo2D(a + edge * (p - ta));
@@ -433,10 +501,10 @@ namespace uge::math
     UGE_INLINE Vec4 Vec4::NearestPointOnEdge(const Vec4 &v0, const Vec4 &v1) const
     {
         Vec4 d = v1 - v0;
-        Float len = d.Normalize(DotProduct3D);
+        Float len = d.Normalize3();
 
         Vec4 v(x - v0.x, y - v0.y, z - v0.z);
-        Float proj = len != 0.f ? Dot(v, d, DotProduct3D) / len : 0.f;
+        Float proj = len != 0.f ? Vec4::Dot3(v, d) / len : 0.f;
 
         if (proj <= 0)
         {
@@ -462,6 +530,16 @@ namespace uge::math
         Vec4 result = _mm_sub_ps(vResult, _mm_mul_ps(temp1, temp2));
         result.w = w;
         return result;
+    }
+
+    UGE_FORCE_INLINE Vec4 Vec4::MaxPlus()
+    {
+        return {_mm_set_ps(FLT_MAX, FLT_MAX, FLT_MAX, FLT_MAX)};
+    }
+
+    UGE_FORCE_INLINE Vec4 Vec4::MaxMinus()
+    {
+        return {_mm_set_ps(-FLT_MAX, -FLT_MAX, -FLT_MAX, -FLT_MAX)};
     }
 
     UGE_FORCE_INLINE Vec4 Vec4::Zeros()

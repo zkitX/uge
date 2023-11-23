@@ -1,7 +1,13 @@
 file (GLOB_RECURSE coreMathSrc CONFIGURE_DEPENDS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp *.h *.hpp *.inl)
 
-add_library(coreMath STATIC
-    ${coreMathSrc}
+if (UGE_DLL)
+    add_library(coreMath SHARED ${coreMathSrc})
+else()
+    add_library(coreMath STATIC ${coreMathSrc})
+endif()
+
+target_compile_definitions(coreMath PRIVATE
+    -DUGE_COREMATH_EXPORT
 )
 
 target_include_directories(coreMath

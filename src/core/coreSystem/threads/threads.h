@@ -166,18 +166,18 @@ namespace uge
     constexpr size_t g_MaxThreadNameLength = 32;
     constexpr UInt32 g_kDefaultThreadStackSize = 2 * 1024 * 1024; // 2 MB
     
-    void Thread_Yield();
-    void Thread_Sleep( TimeoutMs_t ms );
-    void Thread_SetAffinity( AffinityMask_t affinityMask );
-    void Thread_SetName( const AnsiChar* threadName );
-    void Thread_Suspend( ThreadId id );
-    void Thread_Resume( ThreadId id );
+    extern CORESYSTEM_API void Thread_Yield();
+    extern CORESYSTEM_API void Thread_Sleep( TimeoutMs_t ms );
+    extern CORESYSTEM_API void Thread_SetAffinity( AffinityMask_t affinityMask );
+    extern CORESYSTEM_API void Thread_SetName( const AnsiChar* threadName );
+    extern CORESYSTEM_API void Thread_Suspend( ThreadId id );
+    extern CORESYSTEM_API void Thread_Resume( ThreadId id );
 
     //////////////////////////////////////////////////////////////////////////
     // Thread
     //////////////////////////////////////////////////////////////////////////
 
-    class Thread
+    class CORESYSTEM_API Thread
     {
         UGE_NOCLASSCOPY(Thread)
     private:

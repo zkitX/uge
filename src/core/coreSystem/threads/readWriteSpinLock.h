@@ -5,7 +5,7 @@
 
 namespace uge
 {
-    class RWSpinLock
+    class CORESYSTEM_API RWSpinLock
     {
     public:
         RWSpinLock();

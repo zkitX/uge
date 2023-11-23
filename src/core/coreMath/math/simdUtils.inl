@@ -5,6 +5,22 @@ namespace uge::math
 {
     namespace VectorHelpers
     {
+        UGE_INLINE Vector Normalize(Vector v)
+        {
+            __m128 vA = _mm_mul_ps(v, v);
+            vA = _mm_add_ss(
+                _mm_add_ss(_mm_shuffle_ps(vA, vA, _MM_SHUFFLE(0, 0, 0, 0)),
+                           _mm_shuffle_ps(vA, vA, _MM_SHUFFLE(1, 1, 1, 1))),
+                _mm_add_ss(_mm_shuffle_ps(vA, vA, _MM_SHUFFLE(2, 2, 2, 2)),
+                           _mm_shuffle_ps(vA, vA, _MM_SHUFFLE(3, 3, 3, 3))));
+            __m128 length = _mm_sqrt_ss(vA);
+            length = _mm_shuffle_ps(length, length, _MM_SHUFFLE(0, 0, 0, 0));
+            __m128 hasLength = _mm_cmpeq_ss(length, _mm_setzero_ps());
+            hasLength = _mm_shuffle_ps(hasLength, hasLength, _MM_SHUFFLE(0, 0, 0, 0));
+            __m128 unitLength = _mm_div_ps(_mm_set1_ps(1.0f), length);
+            return _mm_andnot_ps(hasLength, _mm_mul_ps(v, unitLength));
+        }
+
         UGE_INLINE Vector Negate(Vector v)
         {
             return _mm_xor_ps(v, _mm_set1_ps(-0.f));

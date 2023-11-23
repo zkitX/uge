@@ -1,22 +1,19 @@
 #ifndef __CORESYSTEM_LOGSINK_H__
 #define __CORESYSTEM_LOGSINK_H__
 
-namespace uge
+namespace uge::log
 {
-    namespace log
-    {
-        struct LogLine;
-        
-        class LogSink
-        {
-        public:
-            virtual void SinkLog(const char* formattedMsg, const LogLine& logLine ) = 0;
-            virtual void Flush() = 0;
+    struct LogLine;
 
-        protected:
-            virtual ~LogSink();
-        };
-    }
+    class CORESYSTEM_API LogSink
+    {
+    public:
+        virtual void SinkLog(const char *formattedMsg, const LogLine &logLine) = 0;
+        virtual void Flush() = 0;
+
+    protected:
+        virtual ~LogSink();
+    };
 }
 
 #endif // __CORESYSTEM_LOGSINK_H__
