@@ -3,20 +3,17 @@
 
 #include "logSink.h"
 
-namespace uge
+namespace uge::log
 {
-    namespace log
+    class CORESYSTEM_API LogDebugSink : public LogSink
     {
-        class LogDebugSink : public LogSink
-        {
-        public:
-            LogDebugSink();
-            virtual ~LogDebugSink();
+    public:
+        LogDebugSink();
+        virtual ~LogDebugSink();
 
-            virtual void SinkLog(const char* formattedMsg, const LogLine& logLine);
-            virtual void Flush();
-        };
-    }
+        virtual void SinkLog(const char *formattedMsg, const LogLine &logLine);
+        virtual void Flush();
+    };
 }
 
 #endif // __CORESYSTEM_LOGDEBUGSINK_H__

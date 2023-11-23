@@ -1,12 +1,9 @@
 #include "build.h"
 #include "logSink.h"
 
-namespace uge
+namespace uge::log
 {
-    namespace log
+    LogSink::~LogSink()
     {
-        LogSink::~LogSink()
-        {
-        }
     }
 }

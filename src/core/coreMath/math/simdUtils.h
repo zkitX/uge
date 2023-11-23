@@ -37,6 +37,7 @@ namespace uge::math
 
     namespace VectorHelpers
     {
+        Vector Normalize(Vector v);
         Vector Negate(Vector v);
         Vector Dot(Vector v1, Vector v2);
         Vector Cross(Vector v1, Vector v2);

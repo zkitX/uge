@@ -3,25 +3,22 @@
 #include "logQueue.h"
 #include "logDebugSink.h"
 
-namespace uge
+namespace uge::log
 {
-    namespace log
+    LogDebugSink::LogDebugSink()
     {
-        LogDebugSink::LogDebugSink()
-        {
-        }
+    }
 
-        LogDebugSink::~LogDebugSink()
-        {
-        }
+    LogDebugSink::~LogDebugSink()
+    {
+    }
 
-        void LogDebugSink::SinkLog(const char* formattedMsg, const LogLine& logLine)
-        {
-            ::OutputDebugStringA(formattedMsg);
-        }
+    void LogDebugSink::SinkLog(const char *formattedMsg, const LogLine &logLine)
+    {
+        ::OutputDebugStringA(formattedMsg);
+    }
 
-        void LogDebugSink::Flush()
-        {
-        }
+    void LogDebugSink::Flush()
+    {
     }
 }

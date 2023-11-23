@@ -3,20 +3,6 @@
 
 namespace uge::math
 {
-    enum DotProductTypeMask : Int32
-    {
-        DotProduct2D = 0x3F,
-        DotProduct3D = 0x7F,
-        DotProduct4D = 0xFF
-    };
-
-    enum EqualMask : Int32
-    {
-        EqualMask2D = 0x03,
-        EqualMask3D = 0x07,
-        EqualMask4D = 0x0F
-    };
-
     UGE_ALIGNED_STRUCT(Vec4, 16)
     {
         union
@@ -25,7 +11,7 @@ namespace uge::math
             {
                 Float x, y, z, w;
             };
-            __m128 vec;
+            Vector vec;
         };
 
         UGE_FORCE_INLINE Vec4() = default;
@@ -36,10 +22,10 @@ namespace uge::math
         Vec4(const Float f[4]);
         Vec4(const Float x, const Float y, const Float z, const Float w = 1.f);
         Vec4(const Float f);
-        Vec4(const __m128 &v);
+        Vec4(const Vector &v);
         Vec4(nullptr_t) = delete;
 
-        operator __m128() const { return *reinterpret_cast<const __m128 *>(&x); }
+        operator Vector() const { return *reinterpret_cast<const Vector *>(&x); }
 
         // operators
         Float &operator[](const size_t i);
@@ -69,19 +55,41 @@ namespace uge::math
         Vec2 &ToVec2();
         const Vec3 &ToVec3() const;
         Vec3 &ToVec3();
+        
+        static Bool Equal2(const Vec4 a, const Vec4 b);
+        static Bool Equal3(const Vec4 a, const Vec4 b);
+        static Bool Equal4(const Vec4 a, const Vec4 b);
 
-        static Bool Equal(const Vec4 a, const Vec4 b, const EqualMask maskType);
-        static Float Dot(const Vec4 &a, const Vec4 &b, const DotProductTypeMask maskType);
+        static Bool Less2(const Vec4 a, const Vec4 b);
+        static Bool Less3(const Vec4 a, const Vec4 b);
+        static Bool Less4(const Vec4 a, const Vec4 b);
+
+        static Bool LessEqual2(const Vec4 a, const Vec4 b);
+        static Bool LessEqual3(const Vec4 a, const Vec4 b);
+        static Bool LessEqual4(const Vec4 a, const Vec4 b);
+
+        static Float Dot2(const Vec4 &a, const Vec4 &b);
+        static Float Dot3(const Vec4 &a, const Vec4 &b);
+        static Float Dot4(const Vec4 &a, const Vec4 &b);
+        Float Dot2(const Vec4 &b) const;
+        Float Dot3(const Vec4 &b) const;
+        Float Dot4(const Vec4 &b) const;
+
         static Vec4 Cross(const Vec4 &a, const Vec4 &b, const Float w = 1.f);
-        Float Dot(const Vec4 &b, const DotProductTypeMask maskType) const;
 
-        Float Magnitude(const DotProductTypeMask maskType) const;
-        Float MagnitudeSquared(const DotProductTypeMask maskType) const;
+        Float Mag2() const;
+        Float Mag3() const;
+        Float Mag4() const;
+        Float SquareMag2() const;
+        Float SquareMag3() const;
+        Float SquareMag4() const;
 
-        __m128 Normalize(__m128 v) const;
-        Vec4 Normalize() const;
-        Float Normalize(const DotProductTypeMask maskType);
-        Vec4 Normalized(const DotProductTypeMask maskType);
+        Float Normalize2();
+        Float Normalize3();
+        void Normalize4();
+        Vec4 Normalized2() const;
+        Vec4 Normalized3() const;
+        Vec4 Normalized4() const; 
 
         void Set(const Float x, const Float y, const Float z, const Float w);
         void Set(const Vec4 &v);
@@ -90,6 +98,12 @@ namespace uge::math
         Vec4 &SetZero();
         Vec4 &SetOne();
         Vec4 &Negate();
+
+        Bool IsNormalized2(const Float eps = 1e-4f) const;
+        Bool IsNormalized3(const Float eps = 1e-4f) const;
+        Bool IsNormalized4(const Float eps = 1e-4f) const;
+        static Vec4 Min4(const Vec4 &a, const Vec4 &b);
+        static Vec4 Max4(const Vec4 &a, const Vec4 &b);
         Bool IsValid() const;
         Bool IsZero() const;
 
@@ -103,6 +117,8 @@ namespace uge::math
         Float DistanceToEdgeSquared(const Vec4 &v0, const Vec4 &v1) const;
         Vec4 NearestPointOnEdge(const Vec4 &v0, const Vec4 &v1) const;
 
+        static Vec4 MaxPlus();
+        static Vec4 MaxMinus();
         static Vec4 Zeros();
         static Vec4 Ones();
         static Vec4 ZeroW();

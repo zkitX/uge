@@ -1,7 +1,16 @@
 file (GLOB_RECURSE coreSystemSrc CONFIGURE_DEPENDS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp *.h *.hpp *.inl)
 
-add_library(coreSystem STATIC
-    ${coreSystemSrc}
+if (UGE_DLL)
+    add_library(coreSystem SHARED ${coreSystemSrc})
+else()
+    add_library(coreSystem STATIC ${coreSystemSrc})
+endif()
+
+target_compile_definitions(coreSystem PRIVATE
+    -DUGE_CORESYSTEM_EXPORT
+)
+
+target_link_libraries(coreSystem Dbghelp.lib
 )
 
 target_include_directories(coreSystem

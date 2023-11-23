@@ -4,51 +4,48 @@
 #include "logFileSink.h"
 #include "file/file.h"
 
-namespace uge
+namespace uge::log
 {
-    namespace log
+    LogFileSink::LogFileSink()
+        : m_file(nullptr)
     {
-        LogFileSink::LogFileSink()
-            : m_file(nullptr)
-        {
-        }
+    }
 
-        LogFileSink::~LogFileSink()
-        {
-            CloseFile();
-        }
+    LogFileSink::~LogFileSink()
+    {
+        CloseFile();
+    }
 
-        void LogFileSink::SinkLog(const char* formattedMsg, const LogLine& logLine)
+    void LogFileSink::SinkLog(const char *formattedMsg, const LogLine &logLine)
+    {
+        if (m_file != nullptr)
         {
-            if (m_file != nullptr)
-            {
-                file::FilePrint(m_file, formattedMsg);
-            }
+            file::FilePrint(m_file, formattedMsg);
         }
+    }
 
-        void LogFileSink::Flush()
+    void LogFileSink::Flush()
+    {
+        if (m_file != nullptr)
         {
-            if (m_file != nullptr)
-            {
-                file::FileFlush(m_file);
-            }
+            file::FileFlush(m_file);
         }
+    }
 
-        Bool LogFileSink::OpenFile(const char* filename, const char* mode)
-        {
-            Bool result = file::FileOpen(&m_file, filename, mode);
-            return result;
-        }
+    Bool LogFileSink::OpenFile(const char *filename, const char *mode)
+    {
+        Bool result = file::FileOpen(&m_file, filename, mode);
+        return result;
+    }
 
-        Bool LogFileSink::CloseFile()
+    Bool LogFileSink::CloseFile()
+    {
+        if (m_file != nullptr)
         {
-            if (m_file != nullptr)
-            {
-                file::FileFlush(m_file);
-                file::FileClose(m_file);
-                m_file = nullptr;
-            }
-            return true;
+            file::FileFlush(m_file);
+            file::FileClose(m_file);
+            m_file = nullptr;
         }
+        return true;
     }
 }
